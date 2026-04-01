@@ -909,7 +909,7 @@ const NAV = [
   { id: "volunteers", icon: "users",  label: "Volunteers" },
   { id: "reports",    icon: "file",   label: "Reports" },
   { id: "donate",     icon: "heart",  label: "Donate" },
-  { id: "schema",     icon: "info",   label: "Backend Setup" },
+ 
 ];
 
 const PAGE_META = {
@@ -918,7 +918,7 @@ const PAGE_META = {
   volunteers: ["Volunteers",    "Registry & hours"],
   reports:    ["Reports",       "Shareable donor documents"],
   donate:     ["Donate",        "Support this NGO"],
-  schema:     ["Backend Setup", "Supabase integration guide"],
+ 
 };
 
 // ─── ROOT APP ────────────────────────────────────────────────────
@@ -1006,7 +1006,7 @@ export default function App() {
               {page === "volunteers" && <Volunteers   org={org} volunteers={volunteers} setVolunteers={setVolunteers} showToast={showToast} />}
               {page === "reports"    && <Reports      activities={activities} showToast={showToast} />}
               {page === "donate"     && <Donate       org={org} showToast={showToast} />}
-              {page === "schema"     && <Schema />}
+             
             </>
           )}
         </div>
