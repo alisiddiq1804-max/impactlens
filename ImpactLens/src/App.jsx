@@ -633,8 +633,9 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
               <div className="vc-btn" onClick={() => openEdit(v)}>Edit</div>
               <div className="vc-btn del" onClick={() => deleteVol(v.id)}>Remove</div>
             </div>
-          </div>
-
+         </div>
+        </div>
+      </div>
 
       {modal && (
         <div className="overlay" onClick={() => setModal(false)}>
