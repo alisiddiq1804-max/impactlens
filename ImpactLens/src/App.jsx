@@ -173,7 +173,7 @@ const css = `
   .aerr{background:#2a1515;border:1px solid rgba(192,74,60,.3);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--rd);margin-bottom:14px;display:flex;align-items:center;gap:8px}
   .vg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   .vc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:18px;transition:border-color .2s}
-  .vc:hover{border-color:var(--bdl)}
+  .vc:hover{border-color:var(--bdl)} .vc-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)} .vc-btn{flex:1;padding:6px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--rs);color:var(--txm);font-family:'Instrument Sans',sans-serif;transition:all .15s;text-align:center} .vc-btn:hover{border-color:var(--bdl);color:var(--tx)} .vc-btn.del:hover{border-color:var(--rd);color:var(--rd)}
   .vh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
   .va{width:34px;height:34px;border-radius:7px;background:var(--grd);border:1px solid rgba(78,157,107,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--grl)}
   .vn{font-size:14px;font-weight:500;color:var(--tx)}
@@ -572,20 +572,39 @@ const LogActivity = ({ org, onSave, setPage, showToast }) => {
 // ─── PAGE: VOLUNTEERS ───────────────────────────────────────────
 const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   const [modal, setModal] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const openAdd = () => { setEditing(null); setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" }); setModal(true); };
+  const openEdit = (v) => { setEditing(v); setForm({ name: v.name, role: v.role || "Field Coordinator", email: v.email || "", phone: v.phone || "", skills: v.skills || "" }); setModal(true); };
 
   const submit = async () => {
     if (!form.name) { showToast("Name is required.", "err"); return; }
     setLoading(true);
     try {
-      const rec = await db.addVolunteer(org.id, form);
-      setVolunteers(v => [rec, ...v]);
-      setModal(false); setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" });
-      showToast("Volunteer registered.");
+      if (editing) {
+        if (!isDemo) await supabase.from("volunteers").update(form).eq("id", editing.id);
+        setVolunteers(v => v.map(x => x.id === editing.id ? { ...x, ...form } : x));
+        showToast("Volunteer updated.");
+      } else {
+        const rec = await db.addVolunteer(org.id, form);
+        setVolunteers(v => [rec, ...v]);
+        showToast("Volunteer registered.");
+      }
+      setModal(false);
     } catch { showToast("Failed to save.", "err"); }
     setLoading(false);
+  };
+
+  const deleteVol = async (id) => {
+    if (!window.confirm("Remove this volunteer?")) return;
+    try {
+      if (!isDemo) await supabase.from("volunteers").delete().eq("id", id);
+      setVolunteers(v => v.filter(x => x.id !== id));
+      showToast("Volunteer removed.");
+    } catch { showToast("Failed to delete.", "err"); }
   };
 
   return (
@@ -595,7 +614,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
           <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Volunteer Registry</div>
           <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>{volunteers.length} registered · {volunteers.reduce((s, v) => s + (v.hours_logged || 0), 0).toLocaleString()} total hours</div>
         </div>
-        <button className="btn bp" onClick={() => setModal(true)}><Icon name="plus" size={13} />Register Volunteer</button>
+        <button className="btn bp" onClick={openAdd}><Icon name="plus" size={13} />Register Volunteer</button>
       </div>
       <div className="vg">
         {volunteers.map(v => (
@@ -606,18 +625,21 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
             </div>
             <div className="vn">{v.name}</div>
             {v.email && <div className="vr">{v.email}</div>}
-            <div className="vs">
+          <div className="vs">
               <div><div className="vv">{v.hours_logged || 0}</div><div className="vl">Hours</div></div>
               <div><div className="vv">{v.events_attended || 0}</div><div className="vl">Events</div></div>
             </div>
+            <div className="vc-actions">
+              <div className="vc-btn" onClick={() => openEdit(v)}>Edit</div>
+              <div className="vc-btn del" onClick={() => deleteVol(v.id)}>Remove</div>
+            </div>
           </div>
-        ))}
-      </div>
+
 
       {modal && (
         <div className="overlay" onClick={() => setModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="mh"><div className="mt">Register Volunteer</div><div className="ms">Add a new member to your registry</div></div>
+           <div className="mh"><div className="mt">{editing ? "Edit Volunteer" : "Register Volunteer"}</div><div className="ms">{editing ? "Update volunteer details" : "Add a new member to your registry"}</div></div>
             <div className="mb">
               <div className="fg">
                 <div className="fd"><label>Full Name</label><input placeholder="Full name" value={form.name} onChange={e => set("name", e.target.value)} /></div>
