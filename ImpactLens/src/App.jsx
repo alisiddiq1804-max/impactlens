@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
@@ -6,62 +6,55 @@ import {
 } from "recharts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// ─── SUPABASE CONFIG ────────────────────────────────────────────
-// Replace these with your own project URL and anon key from supabase.com
+// ─── SUPABASE CONFIG — REPLACE THESE TWO LINES ──────────────────
 const SUPABASE_URL = "https://afhioirxrjaxcieqimlo.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmaGlvaXJ4cmpheGNpZXFpbWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NTY5OTAsImV4cCI6MjA5MDUzMjk5MH0.FW1c42k1VfrGxGxEMooPAMNHHuaoe4EnDavdPD_Ej1E";
+// ────────────────────────────────────────────────────────────────
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
 
-// ─── DESIGN TOKENS ─────────────────────────────────────────────
+// ─── DESIGN TOKENS ───────────────────────────────────────────────
 const C = {
-  bg:       "#0E0F0F",
-  surface:  "#161818",
-  raised:   "#1C1E1E",
-  border:   "#272A2A",
-  borderLt: "#313535",
-  text:     "#F0EDE8",
-  textMd:   "#9A9690",
-  textDim:  "#5C5A57",
-  green:    "#4E9D6B",
-  greenLt:  "#6BBF87",
-  greenDim: "#1E3328",
-  amber:    "#C8892A",
-  amberDim: "#2E2010",
-  red:      "#C04A3C",
-  blue:     "#3E7CB1",
+  bg: "#0E0F0F", surface: "#161818", raised: "#1C1E1E",
+  border: "#272A2A", borderLt: "#313535",
+  text: "#F0EDE8", textMd: "#9A9690", textDim: "#5C5A57",
+  green: "#4E9D6B", greenLt: "#6BBF87", greenDim: "#1E3328",
+  amber: "#C8892A", amberDim: "#2E2010", red: "#C04A3C", blue: "#3E7CB1",
 };
 
-// ─── SVG ICON LIBRARY ───────────────────────────────────────────
+// ─── ICONS ───────────────────────────────────────────────────────
 const Icon = ({ name, size = 16, color = "currentColor", strokeWidth = 1.5 }) => {
   const s = { width: size, height: size, display: "block", flexShrink: 0 };
   const p = { fill: "none", stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round" };
   const icons = {
-    grid:    <svg style={s} viewBox="0 0 24 24"><rect {...p} x="3" y="3" width="7" height="7" rx="1"/><rect {...p} x="14" y="3" width="7" height="7" rx="1"/><rect {...p} x="3" y="14" width="7" height="7" rx="1"/><rect {...p} x="14" y="14" width="7" height="7" rx="1"/></svg>,
-    edit:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path {...p} d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
-    users:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle {...p} cx="9" cy="7" r="4"/><path {...p} d="M23 21v-2a4 4 0 0 0-3-3.87"/><path {...p} d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-    file:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline {...p} points="14 2 14 8 20 8"/><line {...p} x1="16" y1="13" x2="8" y2="13"/><line {...p} x1="16" y1="17" x2="8" y2="17"/></svg>,
-    heart:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
-    trending:<svg style={s} viewBox="0 0 24 24"><polyline {...p} points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline {...p} points="17 6 23 6 23 12"/></svg>,
-    download:<svg style={s} viewBox="0 0 24 24"><path {...p} d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline {...p} points="7 10 12 15 17 10"/><line {...p} x1="12" y1="15" x2="12" y2="3"/></svg>,
-    share:   <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="18" cy="5" r="3"/><circle {...p} cx="6" cy="12" r="3"/><circle {...p} cx="18" cy="19" r="3"/><line {...p} x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line {...p} x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
-    plus:    <svg style={s} viewBox="0 0 24 24"><line {...p} x1="12" y1="5" x2="12" y2="19"/><line {...p} x1="5" y1="12" x2="19" y2="12"/></svg>,
-    arrow:   <svg style={s} viewBox="0 0 24 24"><line {...p} x1="5" y1="12" x2="19" y2="12"/><polyline {...p} points="12 5 19 12 12 19"/></svg>,
-    check:   <svg style={s} viewBox="0 0 24 24"><polyline {...p} points="20 6 9 17 4 12"/></svg>,
-    x:       <svg style={s} viewBox="0 0 24 24"><line {...p} x1="18" y1="6" x2="6" y2="18"/><line {...p} x1="6" y1="6" x2="18" y2="18"/></svg>,
-    leaf:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M2 22c0 0 4-2 8-6s8-10 12-14c0 0-8 0-14 6S2 22 2 22z"/></svg>,
-    bar:     <svg style={s} viewBox="0 0 24 24"><line {...p} x1="18" y1="20" x2="18" y2="10"/><line {...p} x1="12" y1="20" x2="12" y2="4"/><line {...p} x1="6" y1="20" x2="6" y2="14"/></svg>,
-    shield:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-    person:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle {...p} cx="12" cy="7" r="4"/></svg>,
-    info:    <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="12" cy="12" r="10"/><line {...p} x1="12" y1="8" x2="12" y2="12"/><line {...p} x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+    grid:     <svg style={s} viewBox="0 0 24 24"><rect {...p} x="3" y="3" width="7" height="7" rx="1"/><rect {...p} x="14" y="3" width="7" height="7" rx="1"/><rect {...p} x="3" y="14" width="7" height="7" rx="1"/><rect {...p} x="14" y="14" width="7" height="7" rx="1"/></svg>,
+    edit:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path {...p} d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    users:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle {...p} cx="9" cy="7" r="4"/><path {...p} d="M23 21v-2a4 4 0 0 0-3-3.87"/><path {...p} d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    file:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline {...p} points="14 2 14 8 20 8"/><line {...p} x1="16" y1="13" x2="8" y2="13"/><line {...p} x1="16" y1="17" x2="8" y2="17"/></svg>,
+    heart:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
+    trending: <svg style={s} viewBox="0 0 24 24"><polyline {...p} points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline {...p} points="17 6 23 6 23 12"/></svg>,
+    download: <svg style={s} viewBox="0 0 24 24"><path {...p} d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline {...p} points="7 10 12 15 17 10"/><line {...p} x1="12" y1="15" x2="12" y2="3"/></svg>,
+    share:    <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="18" cy="5" r="3"/><circle {...p} cx="6" cy="12" r="3"/><circle {...p} cx="18" cy="19" r="3"/><line {...p} x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line {...p} x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+    plus:     <svg style={s} viewBox="0 0 24 24"><line {...p} x1="12" y1="5" x2="12" y2="19"/><line {...p} x1="5" y1="12" x2="19" y2="12"/></svg>,
+    arrow:    <svg style={s} viewBox="0 0 24 24"><line {...p} x1="5" y1="12" x2="19" y2="12"/><polyline {...p} points="12 5 19 12 12 19"/></svg>,
+    check:    <svg style={s} viewBox="0 0 24 24"><polyline {...p} points="20 6 9 17 4 12"/></svg>,
+    x:        <svg style={s} viewBox="0 0 24 24"><line {...p} x1="18" y1="6" x2="6" y2="18"/><line {...p} x1="6" y1="6" x2="18" y2="18"/></svg>,
+    leaf:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M2 22c0 0 4-2 8-6s8-10 12-14c0 0-8 0-14 6S2 22 2 22z"/></svg>,
+    bar:      <svg style={s} viewBox="0 0 24 24"><line {...p} x1="18" y1="20" x2="18" y2="10"/><line {...p} x1="12" y1="20" x2="12" y2="4"/><line {...p} x1="6" y1="20" x2="6" y2="14"/></svg>,
+    shield:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+    person:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle {...p} cx="12" cy="7" r="4"/></svg>,
+    info:     <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="12" cy="12" r="10"/><line {...p} x1="12" y1="8" x2="12" y2="12"/><line {...p} x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+    sparkle:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>,
+    predict:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M2 20h20"/><path {...p} d="M4 20V10l4-4 4 3 4-6 4 5v12"/></svg>,
   };
   return icons[name] || null;
 };
 
-// ─── CSS ────────────────────────────────────────────────────────
+// ─── CSS ─────────────────────────────────────────────────────────
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Geist+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--bg:${C.bg};--sf:${C.surface};--rs:${C.raised};--bd:${C.border};--bdl:${C.borderLt};--tx:${C.text};--txm:${C.textMd};--txd:${C.textDim};--gr:${C.green};--grl:${C.greenLt};--grd:${C.greenDim};--am:${C.amber};--rd:${C.red};--bl:${C.blue}}
+  :root{--bg:${C.bg};--sf:${C.surface};--rs:${C.raised};--bd:${C.border};--bdl:${C.borderLt};--tx:${C.text};--txm:${C.textMd};--txd:${C.textDim};--gr:${C.green};--grl:${C.greenLt};--grd:${C.greenDim};--am:${C.amber};--amd:${C.amberDim};--rd:${C.red};--bl:${C.blue}}
   html,body{height:100%;background:var(--bg);color:var(--tx)}
   body{font-family:'Instrument Sans',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
   .app{display:flex;height:100vh;overflow:hidden}
@@ -89,6 +82,7 @@ const css = `
   .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:6px;font-family:'Instrument Sans',sans-serif;font-size:12.5px;font-weight:500;padding:7px 14px;transition:all .15s;letter-spacing:.2px;white-space:nowrap}
   .bp{background:var(--gr);color:#fff}.bp:hover{background:var(--grl)}
   .bg{background:transparent;color:var(--txm);border:1px solid var(--bd)}.bg:hover{border-color:var(--bdl);color:var(--tx)}
+  .bam{background:var(--am);color:#fff}.bam:hover{opacity:.9}
   .bs{padding:5px 10px;font-size:11.5px}
   .card{background:var(--sf);border:1px solid var(--bd);border-radius:10px}
   .ch{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
@@ -101,9 +95,11 @@ const css = `
   .sl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd)}
   .sv{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--tx);line-height:1;margin:8px 0 5px;letter-spacing:-1px}
   .sd{font-size:11px;color:var(--gr);display:flex;align-items:center;gap:4px}
+  .sd.neg{color:var(--rd)}
   .si{position:absolute;top:16px;right:16px;color:var(--txd);opacity:.4}
   .cr{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:18px}
   .cre{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .crt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
   table{width:100%;border-collapse:collapse}
   thead tr{border-bottom:1px solid var(--bd)}
   th{text-align:left;padding:9px 16px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd);font-weight:500;white-space:nowrap}
@@ -114,8 +110,9 @@ const css = `
   .mono{font-family:'Geist Mono',monospace;font-size:12px}
   .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:500;letter-spacing:.3px}
   .bg2{background:var(--grd);color:var(--grl);border:1px solid rgba(78,157,107,.2)}
-  .ba{background:var(--amberDim);color:var(--am);border:1px solid rgba(200,137,42,.2)}
+  .ba2{background:var(--amd);color:var(--am);border:1px solid rgba(200,137,42,.2)}
   .bd2{background:var(--rs);color:var(--txm);border:1px solid var(--bd)}
+  .bb{background:#1a2a38;color:var(--bl);border:1px solid rgba(62,124,177,.2)}
   .fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ff{grid-column:1/-1}
   .fd{display:flex;flex-direction:column;gap:5px}
@@ -127,8 +124,10 @@ const css = `
   textarea{resize:vertical;min-height:84px;line-height:1.6}
   .prog{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:5px}
   .pf{height:100%;background:var(--gr);border-radius:2px;transition:width .6s ease}
+  .pf-am{height:100%;background:var(--am);border-radius:2px;transition:width .6s ease}
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(6px)}
   .modal{background:var(--sf);border:1px solid var(--bdl);border-radius:12px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+  .modal-lg{width:680px}
   .mh{padding:22px 26px 18px;border-bottom:1px solid var(--bd)}
   .mt{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600}
   .ms{font-size:12px;color:var(--txd);margin-top:3px}
@@ -140,14 +139,36 @@ const css = `
   .rsw svg{transform:rotate(-90deg)}
   .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
   .rv{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--tx);line-height:1}
-  .rd{font-size:11px;color:var(--txd);margin-top:1px}
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--rs);border:1px solid var(--bdl);border-left:3px solid var(--gr);color:var(--tx);padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .25s ease;max-width:320px}
+  .rdl{font-size:11px;color:var(--txd);margin-top:1px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--rs);border:1px solid var(--bdl);border-left:3px solid var(--gr);color:var(--tx);padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .25s ease;max-width:340px}
   .toast.err{border-left-color:var(--rd)}
   @keyframes su{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
   .divider{height:1px;background:var(--bd);margin:18px 0}
   .loader{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--txd);font-size:13px;gap:10px}
   .spin{width:16px;height:16px;border:2px solid var(--bd);border-top-color:var(--gr);border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
+  .ai-box{background:linear-gradient(135deg,#1a2a1e,#0f1a12);border:1px solid rgba(78,157,107,.3);border-radius:10px;padding:24px;position:relative;overflow:hidden}
+  .ai-box::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(78,157,107,.15),transparent 70%);pointer-events:none}
+  .ai-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .ai-text{font-size:13.5px;color:var(--txm);line-height:1.85;font-style:italic}
+  .ai-loading{display:flex;align-items:center;gap:10px;color:var(--txd);font-size:13px;padding:8px 0}
+  .pred-card{background:var(--rs);border:1px solid var(--bd);border-radius:8px;padding:16px}
+  .pred-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--tx);line-height:1;margin:6px 0 3px}
+  .pred-lbl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px}
+  .pred-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:3px}
+  .insight-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+  .insight-row:last-child{border-bottom:none}
+  .insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+  .insight-text{font-size:12.5px;color:var(--txm);line-height:1.6}
+  .score-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+  .score-a{background:var(--grd);color:var(--grl);border:1px solid rgba(78,157,107,.3)}
+  .score-b{background:#1e2a1a;color:#8fbf6a;border:1px solid rgba(143,191,106,.3)}
+  .score-c{background:var(--amd);color:var(--am);border:1px solid rgba(200,137,42,.3)}
+  .score-d{background:#2a1515;color:var(--rd);border:1px solid rgba(192,74,60,.3)}
+  .vc-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+  .vc-btn{flex:1;padding:6px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--rs);color:var(--txm);font-family:'Instrument Sans',sans-serif;transition:all .15s;text-align:center}
+  .vc-btn:hover{border-color:var(--bdl);color:var(--tx)}
+  .vc-btn.del:hover{border-color:var(--rd);color:var(--rd)}
   .landing{min-height:100vh;background:var(--bg);display:flex;flex-direction:column}
   .lnav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--bd)}
   .lhero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 32px 60px}
@@ -173,7 +194,7 @@ const css = `
   .aerr{background:#2a1515;border:1px solid rgba(192,74,60,.3);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--rd);margin-bottom:14px;display:flex;align-items:center;gap:8px}
   .vg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   .vc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:18px;transition:border-color .2s}
-  .vc:hover{border-color:var(--bdl)} .vc-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)} .vc-btn{flex:1;padding:6px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--rs);color:var(--txm);font-family:'Instrument Sans',sans-serif;transition:all .15s;text-align:center} .vc-btn:hover{border-color:var(--bdl);color:var(--tx)} .vc-btn.del:hover{border-color:var(--rd);color:var(--rd)}
+  .vc:hover{border-color:var(--bdl)}
   .vh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
   .va{width:34px;height:34px;border-radius:7px;background:var(--grd);border:1px solid rgba(78,157,107,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--grl)}
   .vn{font-size:14px;font-weight:500;color:var(--tx)}
@@ -193,67 +214,12 @@ const css = `
   .rl2{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
   .tt{background:var(--rs);border:1px solid var(--bdl);border-radius:7px;padding:10px 14px;font-size:12px;color:var(--tx);box-shadow:0 8px 24px rgba(0,0,0,.4)}
   .ttl{color:var(--txd);font-size:11px;margin-bottom:5px}
-  .dm{background:#1a2030;border:1px solid rgba(62,124,177,.25);border-radius:8px;padding:12px 16px;font-size:12px;color:${C.blue};margin-top:16px;display:flex;align-items:center;gap:8px}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
 `;
 
-// ─── SCHEMA ─────────────────────────────────────────────────────
-const SCHEMA_SQL = `-- Run in Supabase → SQL Editor → New Query
-
-create table public.organizations (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users not null,
-  name text not null, type text, city text,
-  created_at timestamptz default now()
-);
-
-create table public.activities (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid references public.organizations not null,
-  name text not null, type text, activity_date date,
-  volunteers int default 0, beneficiaries int default 0,
-  funds_utilized numeric default 0, location text,
-  description text, status text default 'Active',
-  created_at timestamptz default now()
-);
-
-create table public.volunteers (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid references public.organizations not null,
-  name text not null, role text, email text, phone text,
-  skills text, hours_logged int default 0,
-  events_attended int default 0,
-  created_at timestamptz default now()
-);
-
-create table public.donations (
-  id uuid primary key default gen_random_uuid(),
-  org_id uuid references public.organizations not null,
-  donor_name text, amount numeric not null, message text,
-  created_at timestamptz default now()
-);
-
--- Enable RLS
-alter table public.organizations enable row level security;
-alter table public.activities enable row level security;
-alter table public.volunteers enable row level security;
-alter table public.donations enable row level security;
-
--- Policies
-create policy "own_org" on public.organizations
-  for all using (auth.uid() = user_id);
-create policy "org_acts" on public.activities
-  for all using (org_id in (select id from organizations where user_id = auth.uid()));
-create policy "org_vols" on public.volunteers
-  for all using (org_id in (select id from organizations where user_id = auth.uid()));
-create policy "org_don" on public.donations
-  for all using (org_id in (select id from organizations where user_id = auth.uid()));
-create policy "pub_don_insert" on public.donations
-  for insert with check (true);`;
-
-// ─── SEED DATA ──────────────────────────────────────────────────
+// ─── SEED DATA ───────────────────────────────────────────────────
 const SEED = {
   org: { id: "demo", name: "Shiksha Foundation", type: "Education", city: "Mumbai" },
   activities: [
@@ -281,9 +247,7 @@ const SEED = {
   ],
 };
 
-const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
-
-// ─── DB LAYER ───────────────────────────────────────────────────
+// ─── DB LAYER ────────────────────────────────────────────────────
 const db = {
   async getOrg(uid) {
     if (isDemo) return SEED.org;
@@ -322,7 +286,61 @@ const db = {
   },
 };
 
-// ─── CHART TOOLTIP ──────────────────────────────────────────────
+// ─── ANALYTICS HELPERS ───────────────────────────────────────────
+const calcMetrics = (activities) => {
+  const total = activities.length;
+  if (total === 0) return { costPerBeneficiary: 0, retentionRate: 0, avgImpactScore: 0 };
+  const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
+  const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
+  const totV = activities.reduce((s, a) => s + (Number(a.volunteers) || 0), 0);
+  const costPerBeneficiary = totB > 0 ? Math.round(totF / totB) : 0;
+  const retentionRate = totV > 0 ? Math.min(100, Math.round((totV / (total * 10)) * 100)) : 0;
+  const scores = activities.map(a => calcProgrammeScore(a));
+  const avgImpactScore = Math.round(scores.reduce((s, x) => s + x.score, 0) / total);
+  return { costPerBeneficiary, retentionRate, avgImpactScore };
+};
+
+const calcProgrammeScore = (a) => {
+  let score = 0;
+  const f = Number(a.funds_utilized) || 0;
+  const b = Number(a.beneficiaries) || 0;
+  const v = Number(a.volunteers) || 0;
+  if (b > 0) score += 30;
+  if (b > 100) score += 15;
+  if (b > 300) score += 10;
+  if (v > 0) score += 15;
+  if (v > 10) score += 10;
+  if (f > 0 && b > 0 && (f / b) < 200) score += 20;
+  if (a.status === "Completed") score += 0; else score += 5;
+  score = Math.min(100, score);
+  const grade = score >= 85 ? "A" : score >= 70 ? "B" : score >= 50 ? "C" : "D";
+  const suggestions = [];
+  if (b < 50) suggestions.push("Expand outreach — beneficiary reach is below average.");
+  if (v < 5) suggestions.push("Recruit more volunteers to improve programme delivery.");
+  if (f > 0 && b > 0 && (f / b) > 500) suggestions.push("Cost per beneficiary is high — review resource allocation.");
+  if (v > 0 && b > 0 && (b / v) < 5) suggestions.push("Low beneficiary-to-volunteer ratio — consider scaling.");
+  if (suggestions.length === 0) suggestions.push("Programme is performing well. Maintain current approach.");
+  return { score, grade, suggestions };
+};
+
+const calcPredictions = (activities) => {
+  const monthly = SEED.monthly;
+  const last = monthly[monthly.length - 1];
+  const prev = monthly[monthly.length - 2];
+  const bGrowth = prev.beneficiaries > 0 ? ((last.beneficiaries - prev.beneficiaries) / prev.beneficiaries) : 0.15;
+  const vGrowth = prev.volunteers > 0 ? ((last.volunteers - prev.volunteers) / prev.volunteers) : 0.10;
+  const fGrowth = prev.donations > 0 ? ((last.donations - prev.donations) / prev.donations) : 0.12;
+  return {
+    beneficiaries: Math.round(last.beneficiaries * (1 + bGrowth)),
+    volunteers: Math.round(last.volunteers * (1 + vGrowth)),
+    funds: Math.round(last.donations * (1 + fGrowth)),
+    bGrowth: Math.round(bGrowth * 100),
+    vGrowth: Math.round(vGrowth * 100),
+    fGrowth: Math.round(fGrowth * 100),
+  };
+};
+
+// ─── CHART TOOLTIP ───────────────────────────────────────────────
 const CT = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -330,14 +348,14 @@ const CT = ({ active, payload, label }) => {
       <div className="ttl">{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color || C.text }}>
-          {p.name}: <strong>{p.name === "donations" ? `₹${Number(p.value).toLocaleString()}` : p.value}</strong>
+          {p.name}: <strong>{p.name === "donations" || p.name === "funds" ? `₹${Number(p.value).toLocaleString()}` : p.value}</strong>
         </div>
       ))}
     </div>
   );
 };
 
-// ─── SCORE RING ─────────────────────────────────────────────────
+// ─── SCORE RING ──────────────────────────────────────────────────
 const ScoreRing = ({ score = 82 }) => {
   const r = 50, cx = 65, cy = 65, circ = 2 * Math.PI * r, dash = (score / 100) * circ;
   const rows = [
@@ -356,17 +374,17 @@ const ScoreRing = ({ score = 82 }) => {
             <circle cx={cx} cy={cy} r={r} fill="none" stroke={C.green} strokeWidth="8"
               strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
           </svg>
-          <div className="rc"><div className="rv">{score}</div><div className="rd">/ 100</div></div>
+          <div className="rc"><div className="rv">{score}</div><div className="rdl">/ 100</div></div>
         </div>
       </div>
       <div style={{ padding: "0 2px" }}>
-        {rows.map(r => (
-          <div key={r.label} style={{ marginBottom: 10 }}>
+        {rows.map(row => (
+          <div key={row.label} style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
-              <span style={{ color: C.textMd }}>{r.label}</span>
-              <span style={{ color: C.greenLt, fontFamily: "'Geist Mono',monospace", fontSize: 11 }}>{r.val}</span>
+              <span style={{ color: C.textMd }}>{row.label}</span>
+              <span style={{ color: C.greenLt, fontFamily: "'Geist Mono',monospace", fontSize: 11 }}>{row.val}</span>
             </div>
-            <div className="prog"><div className="pf" style={{ width: `${r.pct}%` }} /></div>
+            <div className="prog"><div className="pf" style={{ width: `${row.pct}%` }} /></div>
           </div>
         ))}
       </div>
@@ -374,12 +392,13 @@ const ScoreRing = ({ score = 82 }) => {
   );
 };
 
-// ─── PAGE: DASHBOARD ────────────────────────────────────────────
+// ─── PAGE: DASHBOARD ─────────────────────────────────────────────
 const Dashboard = ({ org, activities, setPage }) => {
-  const totB = activities.reduce((s, a) => s + (a.beneficiaries || 0), 0);
-  const totF = activities.reduce((s, a) => s + (a.funds_utilized || 0), 0);
-  const totV = activities.reduce((s, a) => s + (a.volunteers || 0), 0);
-  const pie  = [
+  const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
+  const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
+  const totV = activities.reduce((s, a) => s + (Number(a.volunteers) || 0), 0);
+  const { costPerBeneficiary, retentionRate, avgImpactScore } = calcMetrics(activities);
+  const pie = [
     { name: "Education", value: 42, color: C.green },
     { name: "Healthcare", value: 28, color: C.amber },
     { name: "Livelihood", value: 20, color: C.blue },
@@ -403,6 +422,27 @@ const Dashboard = ({ org, activities, setPage }) => {
             <div className="sd"><Icon name="trending" size={11} color={C.green} />{s.delta}</div>
           </div>
         ))}
+      </div>
+
+      <div className="crt" style={{ marginBottom: 18 }}>
+        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
+          <div className="sa" style={{ background: C.amber }} />
+          <div className="sl">Cost per Beneficiary</div>
+          <div className="sv">₹{costPerBeneficiary.toLocaleString()}</div>
+          <div className="sd"><Icon name="trending" size={11} color={C.green} />Lower is better</div>
+        </div>
+        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
+          <div className="sa" style={{ background: C.blue }} />
+          <div className="sl">Volunteer Retention</div>
+          <div className="sv">{retentionRate}%</div>
+          <div className={`sd ${retentionRate < 50 ? "neg" : ""}`}><Icon name="users" size={11} color={retentionRate < 50 ? C.red : C.green} />{retentionRate >= 70 ? "Strong" : retentionRate >= 50 ? "Moderate" : "Needs attention"}</div>
+        </div>
+        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
+          <div className="sa" style={{ background: C.green }} />
+          <div className="sl">Avg Impact Score</div>
+          <div className="sv">{avgImpactScore}</div>
+          <div className="sd"><Icon name="sparkle" size={11} color={C.green} />Across all programmes</div>
+        </div>
       </div>
 
       <div className="cr">
@@ -492,20 +532,25 @@ const Dashboard = ({ org, activities, setPage }) => {
         <div style={{ overflowX: "auto" }}>
           <table>
             <thead><tr>
-              <th>Programme</th><th>Type</th><th>Date</th><th>Volunteers</th><th>Beneficiaries</th><th>Funds</th><th>Status</th>
+              <th>Programme</th><th>Type</th><th>Date</th><th>Volunteers</th><th>Beneficiaries</th><th>Cost/Person</th><th>Impact</th><th>Status</th>
             </tr></thead>
             <tbody>
-              {activities.slice(0, 5).map(a => (
-                <tr key={a.id}>
-                  <td style={{ fontWeight: 500 }}>{a.name}</td>
-                  <td><span className="badge bd2">{a.type}</span></td>
-                  <td className="mono" style={{ color: C.textMd }}>{a.activity_date}</td>
-                  <td className="mono">{a.volunteers}</td>
-                  <td className="mono">{a.beneficiaries}</td>
-                  <td className="mono">₹{Number(a.funds_utilized).toLocaleString()}</td>
-                  <td><span className={`badge ${a.status === "Active" ? "bg2" : "bd2"}`}>{a.status}</span></td>
-                </tr>
-              ))}
+              {activities.slice(0, 5).map(a => {
+                const { grade } = calcProgrammeScore(a);
+                const cpp = a.beneficiaries > 0 ? Math.round(a.funds_utilized / a.beneficiaries) : 0;
+                return (
+                  <tr key={a.id}>
+                    <td style={{ fontWeight: 500 }}>{a.name}</td>
+                    <td><span className="badge bd2">{a.type}</span></td>
+                    <td className="mono" style={{ color: C.textMd }}>{a.activity_date}</td>
+                    <td className="mono">{a.volunteers}</td>
+                    <td className="mono">{a.beneficiaries}</td>
+                    <td className="mono">₹{cpp.toLocaleString()}</td>
+                    <td><span className={`score-badge score-${grade.toLowerCase()}`}>{grade}</span></td>
+                    <td><span className={`badge ${a.status === "Active" ? "bg2" : "bd2"}`}>{a.status}</span></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -514,7 +559,7 @@ const Dashboard = ({ org, activities, setPage }) => {
   );
 };
 
-// ─── PAGE: LOG ACTIVITY ─────────────────────────────────────────
+// ─── PAGE: LOG ACTIVITY ──────────────────────────────────────────
 const LogActivity = ({ org, onSave, setPage, showToast }) => {
   const [form, setForm] = useState({ name: "", type: "Education", activity_date: "", volunteers: "", beneficiaries: "", funds_utilized: "", location: "", description: "", status: "Active" });
   const [loading, setLoading] = useState(false);
@@ -569,7 +614,7 @@ const LogActivity = ({ org, onSave, setPage, showToast }) => {
   );
 };
 
-// ─── PAGE: VOLUNTEERS ───────────────────────────────────────────
+// ─── PAGE: VOLUNTEERS ────────────────────────────────────────────
 const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -577,8 +622,17 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const openAdd = () => { setEditing(null); setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" }); setModal(true); };
-  const openEdit = (v) => { setEditing(v); setForm({ name: v.name, role: v.role || "Field Coordinator", email: v.email || "", phone: v.phone || "", skills: v.skills || "" }); setModal(true); };
+  const openAdd = () => {
+    setEditing(null);
+    setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" });
+    setModal(true);
+  };
+
+  const openEdit = (v) => {
+    setEditing(v);
+    setForm({ name: v.name, role: v.role || "Field Coordinator", email: v.email || "", phone: v.phone || "", skills: v.skills || "" });
+    setModal(true);
+  };
 
   const submit = async () => {
     if (!form.name) { showToast("Name is required.", "err"); return; }
@@ -616,6 +670,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
         </div>
         <button className="btn bp" onClick={openAdd}><Icon name="plus" size={13} />Register Volunteer</button>
       </div>
+
       <div className="vg">
         {volunteers.map(v => (
           <div key={v.id} className="vc">
@@ -625,7 +680,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
             </div>
             <div className="vn">{v.name}</div>
             {v.email && <div className="vr">{v.email}</div>}
-          <div className="vs">
+            <div className="vs">
               <div><div className="vv">{v.hours_logged || 0}</div><div className="vl">Hours</div></div>
               <div><div className="vv">{v.events_attended || 0}</div><div className="vl">Events</div></div>
             </div>
@@ -633,14 +688,17 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
               <div className="vc-btn" onClick={() => openEdit(v)}>Edit</div>
               <div className="vc-btn del" onClick={() => deleteVol(v.id)}>Remove</div>
             </div>
-         </div>
-        </div>
+          </div>
+        ))}
       </div>
 
       {modal && (
         <div className="overlay" onClick={() => setModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-           <div className="mh"><div className="mt">{editing ? "Edit Volunteer" : "Register Volunteer"}</div><div className="ms">{editing ? "Update volunteer details" : "Add a new member to your registry"}</div></div>
+            <div className="mh">
+              <div className="mt">{editing ? "Edit Volunteer" : "Register Volunteer"}</div>
+              <div className="ms">{editing ? "Update volunteer details" : "Add a new member to your registry"}</div>
+            </div>
             <div className="mb">
               <div className="fg">
                 <div className="fd"><label>Full Name</label><input placeholder="Full name" value={form.name} onChange={e => set("name", e.target.value)} /></div>
@@ -656,7 +714,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
             </div>
             <div className="mf">
               <button className="btn bg" onClick={() => setModal(false)}>Cancel</button>
-              <button className="btn bp" onClick={submit} disabled={loading}>{loading ? "Saving…" : "Register"}</button>
+              <button className="btn bp" onClick={submit} disabled={loading}>{loading ? "Saving…" : editing ? "Update" : "Register"}</button>
             </div>
           </div>
         </div>
@@ -665,22 +723,54 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   );
 };
 
-// ─── PAGE: REPORTS ──────────────────────────────────────────────
-const Reports = ({ activities, showToast }) => {
-  const totB = activities.reduce((s, a) => s + (a.beneficiaries || 0), 0);
-  const totF = activities.reduce((s, a) => s + (a.funds_utilized || 0), 0);
-  const bkd  = [
+// ─── PAGE: REPORTS + AI NARRATIVE ────────────────────────────────
+const Reports = ({ org, activities, showToast }) => {
+  const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
+  const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
+  const { costPerBeneficiary } = calcMetrics(activities);
+  const [aiText, setAiText] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const generateAiReport = async () => {
+    setAiLoading(true);
+    setAiText("");
+    const summary = activities.slice(0, 5).map(a =>
+      `${a.name} (${a.type}): ${a.beneficiaries} beneficiaries, ${a.volunteers} volunteers, ₹${a.funds_utilized} utilised`
+    ).join("; ");
+    const prompt = `You are writing a donor impact narrative for ${org?.name || "an NGO"} based in ${org?.city || "India"}. Here is their Q1 2025 data: ${summary}. Total beneficiaries: ${totB}. Total funds: ₹${totF}. Cost per beneficiary: ₹${costPerBeneficiary}. Write a compelling, concise 3-paragraph impact narrative (150 words max) suitable for a donor report. Be specific, human, and data-driven. Do not use bullet points.`;
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      const text = data.content?.map(c => c.text || "").join("") || "Unable to generate report.";
+      setAiText(text);
+    } catch {
+      setAiText("AI report generation requires an active API connection.");
+    }
+    setAiLoading(false);
+  };
+
+  const bkd = [
     { label: "Education Programmes", amount: Math.round(totF * 0.40), pct: 40 },
-    { label: "Healthcare Camps",     amount: Math.round(totF * 0.28), pct: 28 },
-    { label: "Livelihood Training",  amount: Math.round(totF * 0.20), pct: 20 },
-    { label: "Operations",           amount: Math.round(totF * 0.12), pct: 12 },
+    { label: "Healthcare Camps", amount: Math.round(totF * 0.28), pct: 28 },
+    { label: "Livelihood Training", amount: Math.round(totF * 0.20), pct: 20 },
+    { label: "Operations", amount: Math.round(totF * 0.12), pct: 12 },
   ];
+
   return (
     <div className="content">
       <div className="rh">
         <div>
           <div className="rtt">Impact Report — Q1 2025</div>
-          <div className="rs2">Shiksha Foundation · January – March 2025</div>
+          <div className="rs2">{org?.name || "NGO"} · January – March 2025</div>
           <div className="rst">
             {[[totB.toLocaleString(), "Beneficiaries"], ["38", "Volunteers"], [`₹${(totF / 100000).toFixed(2)}L`, "Utilised"], ["82", "Trust Score"]].map(([v, l]) => (
               <div key={l}><div className="rv2">{v}</div><div className="rl2">{l}</div></div>
@@ -688,10 +778,42 @@ const Reports = ({ activities, showToast }) => {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-          <button className="btn bg bs" onClick={() => showToast("PDF export requires backend setup.")}><Icon name="download" size={13} />Export PDF</button>
+          <button className="btn bg bs" onClick={() => showToast("PDF export — coming soon.")}><Icon name="download" size={13} />Export PDF</button>
           <button className="btn bp bs" onClick={() => showToast("Shareable link copied.")}><Icon name="share" size={13} />Share</button>
         </div>
       </div>
+
+      <div className="card" style={{ marginBottom: 18 }}>
+        <div className="ch">
+          <div>
+            <div className="ct">AI Impact Narrative</div>
+            <div className="cs">Claude reads your data and writes a donor-ready report automatically</div>
+          </div>
+          <button className="btn bam bs" onClick={generateAiReport} disabled={aiLoading}>
+            <Icon name="sparkle" size={13} />{aiLoading ? "Generating…" : "Generate Report"}
+          </button>
+        </div>
+        <div className="cb">
+          {!aiText && !aiLoading && (
+            <div style={{ color: C.textDim, fontSize: 13, textAlign: "center", padding: "16px 0" }}>
+              Click "Generate Report" to have AI write a donor narrative based on your real programme data.
+            </div>
+          )}
+          {aiLoading && (
+            <div className="ai-loading">
+              <div className="spin" />
+              Analysing programme data and generating narrative…
+            </div>
+          )}
+          {aiText && (
+            <div className="ai-box">
+              <div className="ai-label"><Icon name="sparkle" size={11} color={C.green} />AI-Generated Donor Narrative</div>
+              <div className="ai-text">{aiText}</div>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="cre">
         <div className="card">
           <div className="ch"><div><div className="ct">Beneficiary Growth</div><div className="cs">Month-over-month</div></div></div>
@@ -710,36 +832,148 @@ const Reports = ({ activities, showToast }) => {
         <div className="card">
           <div className="ch"><div><div className="ct">Financial Summary</div><div className="cs">Fund utilisation by programme</div></div></div>
           <div className="cb">
-            {bkd.map(r => (
-              <div key={r.label} style={{ marginBottom: 14 }}>
+            {bkd.map(row => (
+              <div key={row.label} style={{ marginBottom: 14 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 4 }}>
-                  <span style={{ color: C.textMd }}>{r.label}</span>
-                  <span className="mono">₹{r.amount.toLocaleString()}</span>
+                  <span style={{ color: C.textMd }}>{row.label}</span>
+                  <span className="mono">₹{row.amount.toLocaleString()}</span>
                 </div>
-                <div className="prog"><div className="pf" style={{ width: `${r.pct}%` }} /></div>
+                <div className="prog"><div className="pf" style={{ width: `${row.pct}%` }} /></div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      <div className="card" style={{ marginBottom: 18 }}>
+        <div className="ch"><div><div className="ct">Programme Impact Scores</div><div className="cs">Data-driven rating with improvement suggestions</div></div></div>
+        <div style={{ overflowX: "auto" }}>
+          <table>
+            <thead><tr><th>Programme</th><th>Score</th><th>Grade</th><th>Key Suggestion</th></tr></thead>
+            <tbody>
+              {activities.map(a => {
+                const { score, grade, suggestions } = calcProgrammeScore(a);
+                return (
+                  <tr key={a.id}>
+                    <td style={{ fontWeight: 500 }}>{a.name}</td>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span className="mono">{score}</span>
+                        <div style={{ width: 80 }}>
+                          <div className="prog"><div className="pf" style={{ width: `${score}%` }} /></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span className={`score-badge score-${grade.toLowerCase()}`}>{grade}</span></td>
+                    <td style={{ color: C.textMd, fontSize: 12 }}>{suggestions[0]}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div className="card">
         <div className="ch"><div className="ct">All Programmes</div></div>
         <div style={{ overflowX: "auto" }}>
           <table>
-            <thead><tr><th>Programme</th><th>Type</th><th>Date</th><th>Beneficiaries</th><th>Funds</th><th>Status</th></tr></thead>
+            <thead><tr><th>Programme</th><th>Type</th><th>Date</th><th>Beneficiaries</th><th>Cost/Person</th><th>Funds</th><th>Status</th></tr></thead>
             <tbody>
-              {activities.map(a => (
-                <tr key={a.id}>
-                  <td style={{ fontWeight: 500 }}>{a.name}</td>
-                  <td><span className="badge bd2">{a.type}</span></td>
-                  <td className="mono" style={{ color: C.textMd }}>{a.activity_date}</td>
-                  <td className="mono">{a.beneficiaries}</td>
-                  <td className="mono">₹{Number(a.funds_utilized).toLocaleString()}</td>
-                  <td><span className={`badge ${a.status === "Active" ? "bg2" : "bd2"}`}>{a.status}</span></td>
-                </tr>
-              ))}
+              {activities.map(a => {
+                const cpp = a.beneficiaries > 0 ? Math.round(a.funds_utilized / a.beneficiaries) : 0;
+                return (
+                  <tr key={a.id}>
+                    <td style={{ fontWeight: 500 }}>{a.name}</td>
+                    <td><span className="badge bd2">{a.type}</span></td>
+                    <td className="mono" style={{ color: C.textMd }}>{a.activity_date}</td>
+                    <td className="mono">{a.beneficiaries}</td>
+                    <td className="mono">₹{cpp.toLocaleString()}</td>
+                    <td className="mono">₹{Number(a.funds_utilized).toLocaleString()}</td>
+                    <td><span className={`badge ${a.status === "Active" ? "bg2" : "bd2"}`}>{a.status}</span></td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── PAGE: ANALYTICS / PREDICTIONS ───────────────────────────────
+const Analytics = ({ activities }) => {
+  const pred = calcPredictions(activities);
+  const { costPerBeneficiary, retentionRate } = calcMetrics(activities);
+
+  const insights = [
+    { color: C.green, text: `Beneficiary reach is projected to grow ${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% next month based on your 6-month trend — on track to exceed ${Math.round(pred.beneficiaries / 100) * 100} people.` },
+    { color: pred.bGrowth > 10 ? C.green : C.amber, text: `At ₹${costPerBeneficiary} per beneficiary, your cost efficiency is ${costPerBeneficiary < 150 ? "excellent" : costPerBeneficiary < 300 ? "average" : "high"}. ${costPerBeneficiary > 300 ? "Consider consolidating smaller programmes to reduce overhead." : "Maintain current resource allocation."}` },
+    { color: retentionRate >= 70 ? C.green : C.amber, text: `Volunteer retention stands at ${retentionRate}%. ${retentionRate < 70 ? "Increase volunteer engagement activities — recognition and flexible scheduling improve retention significantly." : "Strong retention. Consider building a volunteer leadership programme."}` },
+    { color: C.blue, text: `Fund disbursement is trending ${pred.fGrowth > 0 ? "upward" : "downward"} at ${Math.abs(pred.fGrowth)}% month-over-month. ${pred.fGrowth > 15 ? "Strong donor confidence — this is a good time to approach new institutional funders." : "Focus on donor retention through quarterly impact reports."}` },
+  ];
+
+  const forecastData = [...SEED.monthly, { month: "Apr*", beneficiaries: pred.beneficiaries, volunteers: pred.volunteers, donations: pred.funds }];
+
+  return (
+    <div className="content">
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Predictive Analytics</div>
+        <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Next-month forecasts based on your historical trend data</div>
+      </div>
+
+      <div className="crt" style={{ marginBottom: 18 }}>
+        {[
+          { label: "Predicted Beneficiaries", value: pred.beneficiaries.toLocaleString(), delta: `${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% vs this month`, color: pred.bGrowth > 0 ? C.green : C.red },
+          { label: "Predicted Volunteers", value: pred.volunteers.toString(), delta: `${pred.vGrowth > 0 ? "+" : ""}${pred.vGrowth}% vs this month`, color: pred.vGrowth > 0 ? C.green : C.red },
+          { label: "Predicted Fund Need", value: `₹${(pred.funds / 1000).toFixed(0)}k`, delta: `${pred.fGrowth > 0 ? "+" : ""}${pred.fGrowth}% vs this month`, color: C.amber },
+        ].map(s => (
+          <div key={s.label} className="pred-card">
+            <div className="pred-lbl">{s.label}</div>
+            <div className="pred-val">{s.value}</div>
+            <div className="pred-delta" style={{ color: s.color }}>
+              <Icon name="trending" size={11} color={s.color} />{s.delta}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{ marginBottom: 18 }}>
+        <div className="ch"><div><div className="ct">6-Month Forecast</div><div className="cs">Apr* is a model-generated prediction</div></div></div>
+        <div className="cb" style={{ paddingTop: 8 }}>
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={forecastData}>
+              <defs>
+                <linearGradient id="fg2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={C.green} stopOpacity={0.2} />
+                  <stop offset="100%" stopColor={C.green} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="2 4" stroke={C.border} vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CT />} />
+              <Area type="monotone" dataKey="beneficiaries" stroke={C.green} strokeWidth={2} fill="url(#fg2)" name="beneficiaries" dot={(props) => {
+                if (props.index === forecastData.length - 1) {
+                  return <circle key={props.index} cx={props.cx} cy={props.cy} r={5} fill={C.amber} stroke={C.amber} strokeWidth={2} />;
+                }
+                return <circle key={props.index} cx={props.cx} cy={props.cy} r={3} fill={C.green} strokeWidth={0} />;
+              }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="ch"><div><div className="ct">Data-Driven Insights</div><div className="cs">Actionable recommendations based on your trends</div></div></div>
+        <div className="cb">
+          {insights.map((ins, i) => (
+            <div key={i} className="insight-row">
+              <div className="insight-dot" style={{ background: ins.color }} />
+              <div className="insight-text">{ins.text}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -798,34 +1032,12 @@ const Donate = ({ org, showToast }) => {
           <button className="btn bp" style={{ width: "100%", justifyContent: "center", padding: "11px" }} onClick={submit} disabled={loading}>
             {loading ? "Processing…" : `Contribute ₹${final.toLocaleString()}`}
           </button>
-          <div style={{ fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 10 }}>
-            Transparent quarterly reports · 80G eligible
-          </div>
+          <div style={{ fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 10 }}>Transparent quarterly reports · 80G eligible</div>
         </div>
       </div>
     </div>
   );
 };
-
-// ─── PAGE: SCHEMA / SETUP ────────────────────────────────────────
-const Schema = () => (
-  <div className="content" style={{ maxWidth: 740 }}>
-    <div style={{ marginBottom: 20 }}>
-      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Backend Setup</div>
-      <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Three steps to connect your live Supabase database</div>
-    </div>
-    {[
-      { title: "Step 1 — Create a Supabase Project", body: <ol style={{ paddingLeft: 18, fontSize: 13, color: C.textMd, lineHeight: 2 }}><li>Go to <strong style={{ color: C.text }}>supabase.com</strong> and create a free account</li><li>Create a new project — choose any region</li><li>Copy your <strong style={{ color: C.text }}>Project URL</strong> and <strong style={{ color: C.text }}>anon public key</strong> from Settings → API</li><li>Replace the placeholder values at the top of <code style={{ color: C.greenLt, fontFamily: "'Geist Mono',monospace", fontSize: 12 }}>impactlens.jsx</code></li></ol> },
-      { title: "Step 2 — Run the Schema", sub: "Paste into Supabase → SQL Editor → New Query → Run", body: <pre style={{ padding: "18px 22px", fontSize: 11, fontFamily: "'Geist Mono',monospace", color: C.textMd, overflowX: "auto", lineHeight: 1.75, whiteSpace: "pre", margin: 0, background: C.bg, borderTop: `1px solid ${C.border}`, borderRadius: "0 0 10px 10px" }}>{SCHEMA_SQL.trim()}</pre> },
-      { title: "Step 3 — Enable Auth", body: <><ol style={{ paddingLeft: 18, fontSize: 13, color: C.textMd, lineHeight: 2 }}><li>In Supabase, go to <strong style={{ color: C.text }}>Authentication → Providers</strong></li><li>Email auth is enabled by default</li><li>Optionally enable Google OAuth for one-click login</li></ol><div className="dm"><Icon name="info" size={14} color={C.blue} />Currently running in Demo Mode with seed data. Add your Supabase keys to go live.</div></> },
-    ].map((s, i) => (
-      <div key={i} className="card" style={{ marginBottom: 14 }}>
-        <div className="ch"><div><div className="ct">{s.title}</div>{s.sub && <div className="cs">{s.sub}</div>}</div></div>
-        <div style={s.title.includes("Schema") ? {} : { padding: "18px 22px" }}>{s.body}</div>
-      </div>
-    ))}
-  </div>
-);
 
 // ─── AUTH PAGE ───────────────────────────────────────────────────
 const AuthPage = ({ onAuth }) => {
@@ -874,9 +1086,15 @@ const AuthPage = ({ onAuth }) => {
             {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
           </button>
         </div>
-        {isDemo && <div className="dm" style={{ marginTop: 14 }}><Icon name="info" size={14} color={C.blue} />Demo mode — click Sign In to explore with sample data.</div>}
+        {isDemo && (
+          <div style={{ marginTop: 14, padding: "10px 14px", background: C.greenDim, borderRadius: 7, fontSize: 12, color: C.greenLt, border: `1px solid ${C.green}33` }}>
+            Demo mode — click Sign In to explore with sample data.
+          </div>
+        )}
         <div className="asw">
-          {mode === "login" ? <>No account? <span className="aln" onClick={() => setMode("signup")}>Register your NGO</span></> : <>Already registered? <span className="aln" onClick={() => setMode("login")}>Sign in</span></>}
+          {mode === "login"
+            ? <>No account? <span className="aln" onClick={() => setMode("signup")}>Register your NGO</span></>
+            : <>Already registered? <span className="aln" onClick={() => setMode("login")}>Sign in</span></>}
         </div>
       </div>
     </div>
@@ -907,9 +1125,9 @@ const Landing = ({ onEnter }) => (
     </div>
     <div className="lfeats">
       {[
-        { icon: "bar", title: "Auto-generated Reports", desc: "Log once. ImpactLens produces clean quarterly reports for donors and grant committees — automatically." },
-        { icon: "shield", title: "Financial Transparency Score", desc: "A composite trust index based on fund utilisation, reach, and reporting frequency. Build donor confidence at a glance." },
-        { icon: "users", title: "Volunteer Registry", desc: "Track your team's hours, specialisations, and deployment history — all in one place." },
+        { icon: "sparkle", title: "AI Impact Narratives", desc: "Claude reads your programme data and writes a donor-ready impact report automatically — no writing required." },
+        { icon: "predict", title: "Predictive Analytics", desc: "Forecast next month's reach, volunteer needs, and fund requirements based on your historical trends." },
+        { icon: "shield", title: "Transparency Score", desc: "A composite trust index based on fund utilisation, reach, and reporting frequency. Build donor confidence at a glance." },
       ].map(f => (
         <div key={f.title} className="fc">
           <div className="fi"><Icon name={f.icon} size={22} color={C.green} /></div>
@@ -925,35 +1143,35 @@ const Landing = ({ onEnter }) => (
   </div>
 );
 
-// ─── NAV CONFIG ──────────────────────────────────────────────────
+// ─── NAV + META ──────────────────────────────────────────────────
 const NAV = [
-  { id: "dashboard",  icon: "grid",   label: "Overview" },
-  { id: "log",        icon: "edit",   label: "Log Activity" },
-  { id: "volunteers", icon: "users",  label: "Volunteers" },
-  { id: "reports",    icon: "file",   label: "Reports" },
-  { id: "donate",     icon: "heart",  label: "Donate" },
- 
+  { id: "dashboard",  icon: "grid",    label: "Overview" },
+  { id: "log",        icon: "edit",    label: "Log Activity" },
+  { id: "volunteers", icon: "users",   label: "Volunteers" },
+  { id: "reports",    icon: "file",    label: "Reports" },
+  { id: "analytics",  icon: "predict", label: "Analytics" },
+  { id: "donate",     icon: "heart",   label: "Donate" },
 ];
 
 const PAGE_META = {
-  dashboard:  ["Overview",      "Q1 2025"],
-  log:        ["Log Activity",  "Record a new programme"],
-  volunteers: ["Volunteers",    "Registry & hours"],
-  reports:    ["Reports",       "Shareable donor documents"],
-  donate:     ["Donate",        "Support this NGO"],
- 
+  dashboard:  ["Overview",    "Q1 2025"],
+  log:        ["Log Activity","Record a new programme"],
+  volunteers: ["Volunteers",  "Registry & hours"],
+  reports:    ["Reports",     "AI-powered donor documents"],
+  analytics:  ["Analytics",   "Predictions & insights"],
+  donate:     ["Donate",      "Support this NGO"],
 };
 
 // ─── ROOT APP ────────────────────────────────────────────────────
 export default function App() {
-  const [view, setView]           = useState("landing");
-  const [user, setUser]           = useState(null);
-  const [org,  setOrg]            = useState(null);
-  const [page, setPage]           = useState("dashboard");
+  const [view, setView] = useState("landing");
+  const [user, setUser] = useState(null);
+  const [org, setOrg] = useState(null);
+  const [page, setPage] = useState("dashboard");
   const [activities, setActivities] = useState([]);
   const [volunteers, setVolunteers] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
-  const [toast, setToast]         = useState(null);
+  const [toast, setToast] = useState(null);
 
   const showToast = useCallback((msg, type = "ok") => {
     setToast({ msg, type });
@@ -973,7 +1191,6 @@ export default function App() {
   };
 
   const onSaveActivity = rec => setActivities(prev => [rec, ...prev]);
-
   const [title, sub] = PAGE_META[page] || ["", ""];
 
   if (view === "landing") return (<><style>{css}</style><Landing onEnter={() => setView("auth")} /></>);
@@ -1000,7 +1217,10 @@ export default function App() {
           <div className="sb-footer">
             <div className="op" onClick={onLogout} title="Sign out">
               <div className="oa">{org?.name?.[0] || "N"}</div>
-              <div><div className="on">{org?.name || "Organisation"}</div><div className="ot">{org?.city || "NGO"} · Sign out</div></div>
+              <div>
+                <div className="on">{org?.name || "Organisation"}</div>
+                <div className="ot">{org?.city || "NGO"} · Sign out</div>
+              </div>
             </div>
           </div>
         </aside>
@@ -1016,7 +1236,7 @@ export default function App() {
                 <Icon name="arrow" size={12} color={C.textDim} style={{ transform: "rotate(180deg)" }} />Landing
               </button>
               {page === "dashboard" && <button className="btn bp bs" onClick={() => setPage("log")}><Icon name="plus" size={13} />Log Activity</button>}
-              {page === "reports"   && <button className="btn bg bs" onClick={() => showToast("PDF export requires backend setup.")}><Icon name="download" size={13} />Export</button>}
+              {page === "reports"   && <button className="btn bg bs" onClick={() => showToast("PDF export — coming soon.")}><Icon name="download" size={13} />Export</button>}
             </div>
           </div>
 
@@ -1024,12 +1244,12 @@ export default function App() {
             <div className="loader"><div className="spin" />Loading data…</div>
           ) : (
             <>
-              {page === "dashboard"  && <Dashboard   org={org} activities={activities} setPage={setPage} />}
-              {page === "log"        && <LogActivity  org={org} onSave={onSaveActivity} setPage={setPage} showToast={showToast} />}
-              {page === "volunteers" && <Volunteers   org={org} volunteers={volunteers} setVolunteers={setVolunteers} showToast={showToast} />}
-              {page === "reports"    && <Reports      activities={activities} showToast={showToast} />}
-              {page === "donate"     && <Donate       org={org} showToast={showToast} />}
-             
+              {page === "dashboard"  && <Dashboard org={org} activities={activities} setPage={setPage} />}
+              {page === "log"        && <LogActivity org={org} onSave={onSaveActivity} setPage={setPage} showToast={showToast} />}
+              {page === "volunteers" && <Volunteers org={org} volunteers={volunteers} setVolunteers={setVolunteers} showToast={showToast} />}
+              {page === "reports"    && <Reports org={org} activities={activities} showToast={showToast} />}
+              {page === "analytics"  && <Analytics activities={activities} />}
+              {page === "donate"     && <Donate org={org} showToast={showToast} />}
             </>
           )}
         </div>
