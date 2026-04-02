@@ -5,6 +5,7 @@ import {
   Tooltip, ResponsiveContainer
 } from "recharts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { useForm, ValidationError } from "@formspree/react";
 
 // ─── SUPABASE CONFIG — REPLACE THESE TWO LINES ──────────────────
 const SUPABASE_URL = "https://afhioirxrjaxcieqimlo.supabase.co";
@@ -13,13 +14,25 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
 
-// ─── DESIGN TOKENS ───────────────────────────────────────────────
+// ─── DESIGN TOKENS — WARM PREMIUM DARK ──────────────────────────
 const C = {
-  bg: "#0E0F0F", surface: "#161818", raised: "#1C1E1E",
-  border: "#272A2A", borderLt: "#313535",
-  text: "#F0EDE8", textMd: "#9A9690", textDim: "#5C5A57",
-  green: "#4E9D6B", greenLt: "#6BBF87", greenDim: "#1E3328",
-  amber: "#C8892A", amberDim: "#2E2010", red: "#C04A3C", blue: "#3E7CB1",
+  bg:       "#0C0A08",
+  surface:  "#141210",
+  raised:   "#1C1916",
+  border:   "#2C2720",
+  borderLt: "#3D3630",
+  text:     "#F2EDE4",
+  textMd:   "#A89880",
+  textDim:  "#6B5E50",
+  green:    "#5B9E72",
+  greenLt:  "#7DC494",
+  greenDim: "#1A2E20",
+  amber:    "#D4922A",
+  amberDim: "#2E1E08",
+  red:      "#C4503E",
+  blue:     "#4E8BB8",
+  gold:     "#C8A850",
+  goldDim:  "#2A2010",
 };
 
 // ─── ICONS ───────────────────────────────────────────────────────
@@ -31,6 +44,7 @@ const Icon = ({ name, size = 16, color = "currentColor", strokeWidth = 1.5 }) =>
     edit:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path {...p} d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
     users:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle {...p} cx="9" cy="7" r="4"/><path {...p} d="M23 21v-2a4 4 0 0 0-3-3.87"/><path {...p} d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
     file:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline {...p} points="14 2 14 8 20 8"/><line {...p} x1="16" y1="13" x2="8" y2="13"/><line {...p} x1="16" y1="17" x2="8" y2="17"/></svg>,
+    mail:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline {...p} points="22,6 12,13 2,6"/></svg>,
     heart:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
     trending: <svg style={s} viewBox="0 0 24 24"><polyline {...p} points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline {...p} points="17 6 23 6 23 12"/></svg>,
     download: <svg style={s} viewBox="0 0 24 24"><path {...p} d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline {...p} points="7 10 12 15 17 10"/><line {...p} x1="12" y1="15" x2="12" y2="3"/></svg>,
@@ -46,174 +60,248 @@ const Icon = ({ name, size = 16, color = "currentColor", strokeWidth = 1.5 }) =>
     info:     <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="12" cy="12" r="10"/><line {...p} x1="12" y1="8" x2="12" y2="12"/><line {...p} x1="12" y1="16" x2="12.01" y2="16"/></svg>,
     sparkle:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>,
     predict:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M2 20h20"/><path {...p} d="M4 20V10l4-4 4 3 4-6 4 5v12"/></svg>,
+    star:     <svg style={s} viewBox="0 0 24 24"><polygon {...p} points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    about:    <svg style={s} viewBox="0 0 24 24"><path {...p} d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path {...p} d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+    message:  <svg style={s} viewBox="0 0 24 24"><path {...p} d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+    award:    <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="12" cy="8" r="6"/><path {...p} d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>,
   };
   return icons[name] || null;
 };
 
 // ─── CSS ─────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Geist+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Geist+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--bg:${C.bg};--sf:${C.surface};--rs:${C.raised};--bd:${C.border};--bdl:${C.borderLt};--tx:${C.text};--txm:${C.textMd};--txd:${C.textDim};--gr:${C.green};--grl:${C.greenLt};--grd:${C.greenDim};--am:${C.amber};--amd:${C.amberDim};--rd:${C.red};--bl:${C.blue}}
+  :root{
+    --bg:${C.bg};--sf:${C.surface};--rs:${C.raised};--bd:${C.border};--bdl:${C.borderLt};
+    --tx:${C.text};--txm:${C.textMd};--txd:${C.textDim};
+    --gr:${C.green};--grl:${C.greenLt};--grd:${C.greenDim};
+    --am:${C.amber};--amd:${C.amberDim};--rd:${C.red};--bl:${C.blue};
+    --go:${C.gold};--god:${C.goldDim};
+  }
   html,body{height:100%;background:var(--bg);color:var(--tx)}
   body{font-family:'Instrument Sans',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
   .app{display:flex;height:100vh;overflow:hidden}
-  .sidebar{width:220px;min-width:220px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;height:100vh}
-  .sb-logo{padding:22px 18px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
-  .lm{width:28px;height:28px;background:var(--grd);border:1px solid var(--gr);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gr);flex-shrink:0}
-  .ln{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--tx)}
-  .nav{padding:10px 8px;flex:1;overflow-y:auto}
-  .ngl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txd);padding:10px 10px 5px}
-  .ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--txm);font-size:13px;border:none;background:none;width:100%;text-align:left;transition:color .15s,background .15s}
+
+  /* SIDEBAR */
+  .sidebar{width:224px;min-width:224px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;height:100vh}
+  .sb-logo{padding:24px 20px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+  .lm{width:30px;height:30px;background:var(--grd);border:1px solid var(--gr);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--gr);flex-shrink:0}
+  .ln{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--tx);letter-spacing:0.3px}
+  .nav{padding:10px 10px;flex:1;overflow-y:auto}
+  .ngl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txd);padding:10px 10px 6px}
+  .ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;color:var(--txm);font-size:13px;border:none;background:none;width:100%;text-align:left;transition:color .15s,background .15s}
   .ni:hover{background:var(--rs);color:var(--tx)}
   .ni.active{background:var(--grd);color:var(--grl);font-weight:500}
-  .sb-footer{border-top:1px solid var(--bd);padding:12px}
-  .op{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;background:var(--rs);cursor:pointer}
-  .oa{width:28px;height:28px;border-radius:5px;background:var(--grd);border:1px solid var(--gr);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:var(--grl);flex-shrink:0}
+  .sb-footer{border-top:1px solid var(--bd);padding:14px}
+  .op{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;background:var(--rs);cursor:pointer;transition:background .15s}
+  .op:hover{background:var(--bd)}
+  .oa{width:30px;height:30px;border-radius:6px;background:var(--grd);border:1px solid var(--gr);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--grl);flex-shrink:0}
   .on{font-size:12px;color:var(--tx);font-weight:500;line-height:1.3}
   .ot{font-size:10px;color:var(--txd)}
+
+  /* MAIN */
   .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  .tb{height:56px;min-height:56px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 26px;background:var(--sf)}
+  .tb{height:58px;min-height:58px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:var(--sf)}
   .tbl{display:flex;align-items:baseline;gap:12px}
-  .tbt{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--tx)}
+  .tbt{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--tx)}
   .tbs{font-size:11px;color:var(--txd)}
   .tbr{display:flex;align-items:center;gap:8px}
-  .content{flex:1;overflow-y:auto;padding:26px}
-  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:6px;font-family:'Instrument Sans',sans-serif;font-size:12.5px;font-weight:500;padding:7px 14px;transition:all .15s;letter-spacing:.2px;white-space:nowrap}
+  .content{flex:1;overflow-y:auto;padding:28px}
+
+  /* BUTTONS */
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:7px;font-family:'Instrument Sans',sans-serif;font-size:12.5px;font-weight:500;padding:7px 14px;transition:all .15s;letter-spacing:.2px;white-space:nowrap}
   .bp{background:var(--gr);color:#fff}.bp:hover{background:var(--grl)}
   .bg{background:transparent;color:var(--txm);border:1px solid var(--bd)}.bg:hover{border-color:var(--bdl);color:var(--tx)}
-  .bam{background:var(--am);color:#fff}.bam:hover{opacity:.9}
+  .bam{background:var(--am);color:#fff}.bam:hover{opacity:.88}
+  .bgo{background:var(--god);color:var(--go);border:1px solid rgba(200,168,80,.25)}.bgo:hover{background:rgba(200,168,80,.15)}
   .bs{padding:5px 10px;font-size:11.5px}
+
+  /* CARDS */
   .card{background:var(--sf);border:1px solid var(--bd);border-radius:10px}
-  .ch{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
-  .ct{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--tx)}
+  .ch{padding:16px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+  .ct{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--tx)}
   .cs{font-size:11px;color:var(--txd);margin-top:2px}
-  .cb{padding:20px}
+  .cb{padding:22px}
+
+  /* STAT CARDS */
   .sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-  .sc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:18px;position:relative;overflow:hidden}
+  .sc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:20px;position:relative;overflow:hidden}
   .sa{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 10px 10px}
   .sl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd)}
-  .sv{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--tx);line-height:1;margin:8px 0 5px;letter-spacing:-1px}
+  .sv{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--tx);line-height:1;margin:8px 0 5px;letter-spacing:-1px}
   .sd{font-size:11px;color:var(--gr);display:flex;align-items:center;gap:4px}
   .sd.neg{color:var(--rd)}
-  .si{position:absolute;top:16px;right:16px;color:var(--txd);opacity:.4}
+  .si{position:absolute;top:16px;right:16px;color:var(--txd);opacity:.35}
+
+  /* GRID LAYOUTS */
   .cr{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:18px}
   .cre{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
   .crt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+
+  /* TABLE */
   table{width:100%;border-collapse:collapse}
   thead tr{border-bottom:1px solid var(--bd)}
-  th{text-align:left;padding:9px 16px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd);font-weight:500;white-space:nowrap}
-  td{padding:12px 16px;font-size:13px;color:var(--tx);border-bottom:1px solid rgba(39,42,42,.5)}
+  th{text-align:left;padding:9px 18px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd);font-weight:500;white-space:nowrap}
+  td{padding:13px 18px;font-size:13px;color:var(--tx);border-bottom:1px solid rgba(44,39,32,.6)}
   tbody tr:last-child td{border-bottom:none}
   tbody tr{transition:background .1s}
   tbody tr:hover td{background:var(--rs)}
   .mono{font-family:'Geist Mono',monospace;font-size:12px}
-  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:500;letter-spacing:.3px}
-  .bg2{background:var(--grd);color:var(--grl);border:1px solid rgba(78,157,107,.2)}
-  .ba2{background:var(--amd);color:var(--am);border:1px solid rgba(200,137,42,.2)}
+
+  /* BADGES */
+  .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:4px;font-size:10.5px;font-weight:500;letter-spacing:.3px}
+  .bg2{background:var(--grd);color:var(--grl);border:1px solid rgba(91,158,114,.2)}
+  .ba2{background:var(--amd);color:var(--am);border:1px solid rgba(212,146,42,.2)}
   .bd2{background:var(--rs);color:var(--txm);border:1px solid var(--bd)}
-  .bb{background:#1a2a38;color:var(--bl);border:1px solid rgba(62,124,177,.2)}
-  .fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bb{background:#1a2530;color:var(--bl);border:1px solid rgba(78,139,184,.2)}
+  .bgo2{background:var(--god);color:var(--go);border:1px solid rgba(200,168,80,.2)}
+
+  /* FORMS */
+  .fg{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .ff{grid-column:1/-1}
-  .fd{display:flex;flex-direction:column;gap:5px}
+  .fd{display:flex;flex-direction:column;gap:6px}
   .fd label{font-size:10px;color:var(--txd);letter-spacing:1px;font-weight:500;text-transform:uppercase}
-  input,select,textarea{padding:9px 12px;background:var(--rs);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color .15s;width:100%}
-  input::placeholder{color:var(--txd)}
+  input,select,textarea{padding:10px 13px;background:var(--rs);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color .15s;width:100%}
+  input::placeholder,textarea::placeholder{color:var(--txd)}
   input:focus,select:focus,textarea:focus{border-color:var(--gr)}
   select option{background:var(--rs)}
-  textarea{resize:vertical;min-height:84px;line-height:1.6}
+  textarea{resize:vertical;min-height:88px;line-height:1.6}
+
+  /* PROGRESS */
   .prog{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:5px}
   .pf{height:100%;background:var(--gr);border-radius:2px;transition:width .6s ease}
-  .pf-am{height:100%;background:var(--am);border-radius:2px;transition:width .6s ease}
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(6px)}
-  .modal{background:var(--sf);border:1px solid var(--bdl);border-radius:12px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.6)}
-  .modal-lg{width:680px}
-  .mh{padding:22px 26px 18px;border-bottom:1px solid var(--bd)}
-  .mt{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600}
+  .pf-am{height:100%;background:var(--am);border-radius:2px}
+  .pf-go{height:100%;background:var(--go);border-radius:2px}
+
+  /* MODAL */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(8px)}
+  .modal{background:var(--sf);border:1px solid var(--bdl);border-radius:13px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.7)}
+  .mh{padding:24px 28px 20px;border-bottom:1px solid var(--bd)}
+  .mt{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
   .ms{font-size:12px;color:var(--txd);margin-top:3px}
-  .mb{padding:22px 26px}
-  .mf{padding:14px 26px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+  .mb{padding:24px 28px}
+  .mf{padding:16px 28px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+
+  /* SCORE RING */
   .rw{display:flex;flex-direction:column;align-items:center;padding:6px 0 14px}
   .rl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd);margin-bottom:12px}
   .rsw{position:relative;width:130px;height:130px}
   .rsw svg{transform:rotate(-90deg)}
   .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .rv{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--tx);line-height:1}
+  .rv{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;color:var(--tx);line-height:1}
   .rdl{font-size:11px;color:var(--txd);margin-top:1px}
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--rs);border:1px solid var(--bdl);border-left:3px solid var(--gr);color:var(--tx);padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .25s ease;max-width:340px}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--rs);border:1px solid var(--bdl);border-left:3px solid var(--gr);color:var(--tx);padding:12px 18px;border-radius:9px;font-size:13px;box-shadow:0 8px 40px rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .25s ease;max-width:340px}
   .toast.err{border-left-color:var(--rd)}
   @keyframes su{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
-  .divider{height:1px;background:var(--bd);margin:18px 0}
+
+  /* LOADER */
   .loader{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--txd);font-size:13px;gap:10px}
   .spin{width:16px;height:16px;border:2px solid var(--bd);border-top-color:var(--gr);border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
-  .ai-box{background:linear-gradient(135deg,#1a2a1e,#0f1a12);border:1px solid rgba(78,157,107,.3);border-radius:10px;padding:24px;position:relative;overflow:hidden}
-  .ai-box::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(78,157,107,.15),transparent 70%);pointer-events:none}
-  .ai-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-  .ai-text{font-size:13.5px;color:var(--txm);line-height:1.85;font-style:italic}
+
+  /* AI BOX */
+  .ai-box{background:linear-gradient(135deg,#161e14,#0e1510);border:1px solid rgba(91,158,114,.3);border-radius:10px;padding:24px;position:relative;overflow:hidden}
+  .ai-box::before{content:'';position:absolute;top:-50px;right:-50px;width:150px;height:150px;background:radial-gradient(circle,rgba(91,158,114,.12),transparent 70%);pointer-events:none}
+  .ai-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gr);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .ai-powered{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txd);margin-top:14px;padding-top:14px;border-top:1px solid rgba(91,158,114,.15)}
+  .ai-text{font-size:13.5px;color:var(--txm);line-height:1.9;font-style:italic}
   .ai-loading{display:flex;align-items:center;gap:10px;color:var(--txd);font-size:13px;padding:8px 0}
-  .pred-card{background:var(--rs);border:1px solid var(--bd);border-radius:8px;padding:16px}
-  .pred-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--tx);line-height:1;margin:6px 0 3px}
+  .claude-logo{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#c96442,#e8906a);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;font-family:'Instrument Sans',sans-serif}
+
+  /* PREDICTIONS */
+  .pred-card{background:var(--rs);border:1px solid var(--bd);border-radius:9px;padding:18px}
+  .pred-val{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--tx);line-height:1;margin:6px 0 3px}
   .pred-lbl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px}
-  .pred-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:3px}
-  .insight-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+  .pred-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px}
+
+  /* INSIGHTS */
+  .insight-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--bd)}
   .insight-row:last-child{border-bottom:none}
   .insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
-  .insight-text{font-size:12.5px;color:var(--txm);line-height:1.6}
-  .score-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
-  .score-a{background:var(--grd);color:var(--grl);border:1px solid rgba(78,157,107,.3)}
+  .insight-text{font-size:13px;color:var(--txm);line-height:1.65}
+
+  /* SCORE BADGES */
+  .score-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px}
+  .score-a{background:var(--grd);color:var(--grl);border:1px solid rgba(91,158,114,.3)}
   .score-b{background:#1e2a1a;color:#8fbf6a;border:1px solid rgba(143,191,106,.3)}
-  .score-c{background:var(--amd);color:var(--am);border:1px solid rgba(200,137,42,.3)}
-  .score-d{background:#2a1515;color:var(--rd);border:1px solid rgba(192,74,60,.3)}
+  .score-c{background:var(--amd);color:var(--am);border:1px solid rgba(212,146,42,.3)}
+  .score-d{background:#2a1510;color:var(--rd);border:1px solid rgba(196,80,62,.3)}
+
+  /* VOLUNTEER CARDS */
+  .vg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .vc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:20px;transition:border-color .2s}
+  .vc:hover{border-color:var(--bdl)}
+  .vh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+  .va{width:36px;height:36px;border-radius:8px;background:var(--grd);border:1px solid rgba(91,158,114,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--grl)}
+  .vn{font-size:14px;font-weight:500;color:var(--tx)}
+  .vr{font-size:11px;color:var(--txd);margin-top:2px}
+  .vs{display:flex;gap:20px;padding-top:13px;border-top:1px solid var(--bd);margin-top:12px}
+  .vv{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--tx)}
+  .vl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
   .vc-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
-  .vc-btn{flex:1;padding:6px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--rs);color:var(--txm);font-family:'Instrument Sans',sans-serif;transition:all .15s;text-align:center}
+  .vc-btn{flex:1;padding:7px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--rs);color:var(--txm);font-family:'Instrument Sans',sans-serif;transition:all .15s;text-align:center}
   .vc-btn:hover{border-color:var(--bdl);color:var(--tx)}
   .vc-btn.del:hover{border-color:var(--rd);color:var(--rd)}
+
+  /* ABOUT PAGE */
+  .about-hero{background:linear-gradient(135deg,var(--sf),var(--rs));border:1px solid var(--bd);border-radius:12px;padding:40px;margin-bottom:20px;position:relative;overflow:hidden}
+  .about-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(91,158,114,.1),transparent 70%);pointer-events:none}
+  .about-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--tx);margin-bottom:8px;line-height:1.1}
+  .about-title em{color:var(--grl);font-style:italic}
+  .about-subtitle{font-size:14px;color:var(--txm);line-height:1.75;max-width:680px}
+  .about-section{margin-bottom:20px}
+  .about-section-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .about-body{font-size:13.5px;color:var(--txm);line-height:1.85}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .about-card{background:var(--rs);border:1px solid var(--bd);border-radius:9px;padding:18px}
+  .about-card-icon{color:var(--gr);margin-bottom:10px}
+  .about-card-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px}
+  .about-card-text{font-size:12px;color:var(--txm);line-height:1.65}
+  .founder-pill{display:inline-flex;align-items:center;gap:8px;background:var(--god);border:1px solid rgba(200,168,80,.25);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--go);margin-bottom:20px}
+
+  /* CONTACT PAGE */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .contact-info-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:24px}
+  .contact-info-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:16px}
+  .contact-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+  .contact-item:last-child{border-bottom:none}
+  .contact-item-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--txd);margin-bottom:3px}
+  .contact-item-val{font-size:13px;color:var(--tx)}
+  .form-success{background:var(--grd);border:1px solid rgba(91,158,114,.3);border-radius:9px;padding:20px;text-align:center;color:var(--grl);font-size:13px}
+  .form-error-msg{font-size:11px;color:var(--rd);margin-top:4px}
+
+  /* LANDING */
   .landing{min-height:100vh;background:var(--bg);display:flex;flex-direction:column}
   .lnav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid var(--bd)}
   .lhero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 32px 60px}
-  .ley{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gr);margin-bottom:28px;padding:6px 14px;border:1px solid rgba(78,157,107,.25);border-radius:20px;background:var(--grd)}
-  .ltitle{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,78px);font-weight:600;color:var(--tx);line-height:1.07;letter-spacing:-1.5px;margin-bottom:20px;max-width:760px}
-  .ltitle em{color:var(--grl);font-style:normal}
-  .ldesc{font-size:16px;color:var(--txm);max-width:480px;line-height:1.75;margin-bottom:40px}
+  .ley{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gr);margin-bottom:28px;padding:6px 16px;border:1px solid rgba(91,158,114,.25);border-radius:20px;background:var(--grd)}
+  .ltitle{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,80px);font-weight:700;color:var(--tx);line-height:1.07;letter-spacing:-2px;margin-bottom:20px;max-width:780px}
+  .ltitle em{color:var(--grl);font-style:italic}
+  .ldesc{font-size:16px;color:var(--txm);max-width:500px;line-height:1.8;margin-bottom:42px}
   .lacts{display:flex;gap:12px;align-items:center}
-  .bll{padding:12px 26px;font-size:14px;border-radius:8px}
+  .bll{padding:13px 28px;font-size:14px;border-radius:8px}
   .lfeats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
-  .fc{background:var(--bg);padding:36px 32px}
+  .fc{background:var(--bg);padding:38px 34px}
   .fi{color:var(--gr);margin-bottom:16px}
-  .ftt{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:10px}
-  .fd2{font-size:13px;color:var(--txm);line-height:1.7}
-  .lfoot{padding:20px 48px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+  .ftt{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;margin-bottom:10px}
+  .fd2{font-size:13px;color:var(--txm);line-height:1.75}
+  .lfoot{padding:22px 48px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
   .lft{font-size:11px;color:var(--txd)}
+
+  /* AUTH */
   .aw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:24px}
-  .ac{width:400px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:36px;box-shadow:0 24px 80px rgba(0,0,0,.4)}
-  .att{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:6px}
-  .ats{font-size:13px;color:var(--txd);margin-bottom:22px}
-  .asw{text-align:center;margin-top:16px;font-size:12px;color:var(--txd)}
+  .ac{width:400px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:38px;box-shadow:0 32px 80px rgba(0,0,0,.5)}
+  .att{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:6px}
+  .ats{font-size:13px;color:var(--txd);margin-bottom:24px}
+  .asw{text-align:center;margin-top:18px;font-size:12px;color:var(--txd)}
   .aln{color:var(--gr);cursor:pointer;text-decoration:underline}
-  .aerr{background:#2a1515;border:1px solid rgba(192,74,60,.3);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--rd);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-  .vg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .vc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:18px;transition:border-color .2s}
-  .vc:hover{border-color:var(--bdl)}
-  .vh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-  .va{width:34px;height:34px;border-radius:7px;background:var(--grd);border:1px solid rgba(78,157,107,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--grl)}
-  .vn{font-size:14px;font-weight:500;color:var(--tx)}
-  .vr{font-size:11px;color:var(--txd);margin-top:2px}
-  .vs{display:flex;gap:20px;padding-top:12px;border-top:1px solid var(--bd);margin-top:10px}
-  .vv{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--tx)}
-  .vl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
-  .ag{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
-  .ab{padding:10px 8px;background:var(--rs);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-family:'Geist Mono',monospace;font-size:13px;cursor:pointer;text-align:center;transition:all .15s}
-  .ab:hover{border-color:var(--bdl)}
-  .ab.sel{border-color:var(--gr);background:var(--grd);color:var(--grl)}
-  .rh{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:28px;margin-bottom:18px;display:flex;align-items:flex-start;justify-content:space-between}
-  .rtt{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:4px}
-  .rs2{font-size:12px;color:var(--txd)}
-  .rst{display:flex;gap:36px;margin-top:18px}
-  .rv2{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--tx);line-height:1}
-  .rl2{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
-  .tt{background:var(--rs);border:1px solid var(--bdl);border-radius:7px;padding:10px 14px;font-size:12px;color:var(--tx);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-  .ttl{color:var(--txd);font-size:11px;margin-bottom:5px}
+  .aerr{background:#2a1210;border:1px solid rgba(196,80,62,.3);border-radius:7px;padding:11px 14px;font-size:12px;color:var(--rd);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+  /* MISC */
+  .divider{height:1px;background:var(--bd);margin:20px 0}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
@@ -230,12 +318,12 @@ const SEED = {
     { id: 5, name: "Free Eye Checkup Camp", type: "Healthcare", activity_date: "2025-03-12", volunteers: 9, beneficiaries: 230, funds_utilized: 19600, location: "Malad", status: "Completed" },
   ],
   volunteers: [
-    { id: 1, name: "Priya Sharma", role: "Field Coordinator", email: "priya@example.com", hours_logged: 142, events_attended: 12 },
-    { id: 2, name: "Arjun Mehta", role: "Data Analyst", email: "arjun@example.com", hours_logged: 98, events_attended: 8 },
-    { id: 3, name: "Sneha Iyer", role: "Healthcare Lead", email: "sneha@example.com", hours_logged: 210, events_attended: 17 },
-    { id: 4, name: "Rohan Das", role: "Tech Volunteer", email: "rohan@example.com", hours_logged: 76, events_attended: 6 },
-    { id: 5, name: "Kavya Nair", role: "Community Outreach", email: "kavya@example.com", hours_logged: 165, events_attended: 14 },
-    { id: 6, name: "Vikram Singh", role: "Logistics", email: "vikram@example.com", hours_logged: 88, events_attended: 9 },
+    { id: 1, name: "Priya Sharma", role: "Field Coordinator", email: "priya@example.com", hours_logged: 142, events_attended: 12, skills: "Teaching, Outreach" },
+    { id: 2, name: "Arjun Mehta", role: "Data Analyst", email: "arjun@example.com", hours_logged: 98, events_attended: 8, skills: "Data Entry, Excel" },
+    { id: 3, name: "Sneha Iyer", role: "Healthcare Lead", email: "sneha@example.com", hours_logged: 210, events_attended: 17, skills: "First Aid, Nursing" },
+    { id: 4, name: "Rohan Das", role: "Tech Volunteer", email: "rohan@example.com", hours_logged: 76, events_attended: 6, skills: "Web, Design" },
+    { id: 5, name: "Kavya Nair", role: "Community Outreach", email: "kavya@example.com", hours_logged: 165, events_attended: 14, skills: "Communication" },
+    { id: 6, name: "Vikram Singh", role: "Logistics", email: "vikram@example.com", hours_logged: 88, events_attended: 9, skills: "Planning, Transport" },
   ],
   monthly: [
     { month: "Oct", volunteers: 12, beneficiaries: 340, donations: 28000 },
@@ -279,24 +367,26 @@ const db = {
     const { data } = await supabase.from("volunteers").insert({ org_id: oid, ...p }).select().single();
     return data;
   },
-  async addDonation(oid, p) {
-    if (isDemo) return { id: Date.now(), org_id: oid, ...p };
-    const { data } = await supabase.from("donations").insert({ org_id: oid, ...p }).select().single();
-    return data;
+  async updateVolunteer(id, p) {
+    if (isDemo) return;
+    await supabase.from("volunteers").update(p).eq("id", id);
+  },
+  async deleteVolunteer(id) {
+    if (isDemo) return;
+    await supabase.from("volunteers").delete().eq("id", id);
   },
 };
 
 // ─── ANALYTICS HELPERS ───────────────────────────────────────────
 const calcMetrics = (activities) => {
-  const total = activities.length;
-  if (total === 0) return { costPerBeneficiary: 0, retentionRate: 0, avgImpactScore: 0 };
+  if (!activities.length) return { costPerBeneficiary: 0, retentionRate: 0, avgImpactScore: 0 };
   const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
   const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
   const totV = activities.reduce((s, a) => s + (Number(a.volunteers) || 0), 0);
   const costPerBeneficiary = totB > 0 ? Math.round(totF / totB) : 0;
-  const retentionRate = totV > 0 ? Math.min(100, Math.round((totV / (total * 10)) * 100)) : 0;
-  const scores = activities.map(a => calcProgrammeScore(a));
-  const avgImpactScore = Math.round(scores.reduce((s, x) => s + x.score, 0) / total);
+  const retentionRate = totV > 0 ? Math.min(100, Math.round((totV / (activities.length * 10)) * 100)) : 0;
+  const scores = activities.map(a => calcProgrammeScore(a).score);
+  const avgImpactScore = Math.round(scores.reduce((s, x) => s + x, 0) / activities.length);
   return { costPerBeneficiary, retentionRate, avgImpactScore };
 };
 
@@ -311,25 +401,23 @@ const calcProgrammeScore = (a) => {
   if (v > 0) score += 15;
   if (v > 10) score += 10;
   if (f > 0 && b > 0 && (f / b) < 200) score += 20;
-  if (a.status === "Completed") score += 0; else score += 5;
   score = Math.min(100, score);
   const grade = score >= 85 ? "A" : score >= 70 ? "B" : score >= 50 ? "C" : "D";
   const suggestions = [];
   if (b < 50) suggestions.push("Expand outreach — beneficiary reach is below average.");
   if (v < 5) suggestions.push("Recruit more volunteers to improve programme delivery.");
   if (f > 0 && b > 0 && (f / b) > 500) suggestions.push("Cost per beneficiary is high — review resource allocation.");
-  if (v > 0 && b > 0 && (b / v) < 5) suggestions.push("Low beneficiary-to-volunteer ratio — consider scaling.");
   if (suggestions.length === 0) suggestions.push("Programme is performing well. Maintain current approach.");
   return { score, grade, suggestions };
 };
 
-const calcPredictions = (activities) => {
+const calcPredictions = () => {
   const monthly = SEED.monthly;
   const last = monthly[monthly.length - 1];
   const prev = monthly[monthly.length - 2];
-  const bGrowth = prev.beneficiaries > 0 ? ((last.beneficiaries - prev.beneficiaries) / prev.beneficiaries) : 0.15;
-  const vGrowth = prev.volunteers > 0 ? ((last.volunteers - prev.volunteers) / prev.volunteers) : 0.10;
-  const fGrowth = prev.donations > 0 ? ((last.donations - prev.donations) / prev.donations) : 0.12;
+  const bGrowth = (last.beneficiaries - prev.beneficiaries) / prev.beneficiaries;
+  const vGrowth = (last.volunteers - prev.volunteers) / prev.volunteers;
+  const fGrowth = (last.donations - prev.donations) / prev.donations;
   return {
     beneficiaries: Math.round(last.beneficiaries * (1 + bGrowth)),
     volunteers: Math.round(last.volunteers * (1 + vGrowth)),
@@ -340,12 +428,20 @@ const calcPredictions = (activities) => {
   };
 };
 
+const volPerformance = (v) => {
+  const score = (v.hours_logged || 0) * 0.5 + (v.events_attended || 0) * 10;
+  if (score >= 150) return { label: "Top Performer", color: C.gold, cls: "bgo2" };
+  if (score >= 80) return { label: "Active", color: C.green, cls: "bg2" };
+  if (score >= 30) return { label: "Moderate", color: C.amber, cls: "ba2" };
+  return { label: "Needs Engagement", color: C.red, cls: "bd2" };
+};
+
 // ─── CHART TOOLTIP ───────────────────────────────────────────────
 const CT = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="tt">
-      <div className="ttl">{label}</div>
+    <div style={{ background: C.raised, border: `1px solid ${C.borderLt}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: C.text, boxShadow: `0 8px 24px rgba(0,0,0,.4)` }}>
+      <div style={{ color: C.textDim, fontSize: 11, marginBottom: 5 }}>{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color || C.text }}>
           {p.name}: <strong>{p.name === "donations" || p.name === "funds" ? `₹${Number(p.value).toLocaleString()}` : p.value}</strong>
@@ -379,7 +475,7 @@ const ScoreRing = ({ score = 82 }) => {
       </div>
       <div style={{ padding: "0 2px" }}>
         {rows.map(row => (
-          <div key={row.label} style={{ marginBottom: 10 }}>
+          <div key={row.label} style={{ marginBottom: 11 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
               <span style={{ color: C.textMd }}>{row.label}</span>
               <span style={{ color: C.greenLt, fontFamily: "'Geist Mono',monospace", fontSize: 11 }}>{row.val}</span>
@@ -392,12 +488,65 @@ const ScoreRing = ({ score = 82 }) => {
   );
 };
 
+// ─── PDF EXPORT ──────────────────────────────────────────────────
+const exportPDF = async (org, activities) => {
+  const { default: jsPDF } = await import("jspdf");
+  const { default: autoTable } = await import("jspdf-autotable");
+  const doc = new jsPDF();
+  const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
+  const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
+
+  doc.setFillColor(12, 10, 8);
+  doc.rect(0, 0, 210, 50, "F");
+  doc.setTextColor(242, 237, 228);
+  doc.setFontSize(24);
+  doc.setFont("helvetica", "bold");
+  doc.text("ImpactLens", 14, 20);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(168, 152, 128);
+  doc.text(`Impact Report — Q1 2025`, 14, 30);
+  doc.text(`${org?.name || "NGO"} · ${org?.city || "India"}`, 14, 38);
+
+  doc.setTextColor(40, 40, 40);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("Summary", 14, 62);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  const summary = [
+    ["Total Beneficiaries", totB.toLocaleString()],
+    ["Funds Utilised", `INR ${totF.toLocaleString()}`],
+    ["Programmes Run", activities.length.toString()],
+    ["Cost per Beneficiary", totB > 0 ? `INR ${Math.round(totF / totB)}` : "N/A"],
+  ];
+  summary.forEach(([k, v], i) => {
+    doc.setTextColor(100, 100, 100); doc.text(k, 14, 72 + i * 8);
+    doc.setTextColor(40, 40, 40); doc.text(v, 90, 72 + i * 8);
+  });
+
+  autoTable(doc, {
+    startY: 110,
+    head: [["Programme", "Type", "Date", "Beneficiaries", "Volunteers", "Funds (INR)"]],
+    body: activities.map(a => [a.name, a.type, a.activity_date, a.beneficiaries, a.volunteers, Number(a.funds_utilized).toLocaleString()]),
+    headStyles: { fillColor: [28, 25, 22], textColor: [242, 237, 228], fontSize: 9 },
+    bodyStyles: { fontSize: 9, textColor: [40, 40, 40] },
+    alternateRowStyles: { fillColor: [248, 246, 243] },
+  });
+
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.text(`Generated by ImpactLens · alisiddiq1804@gmail.com · ${new Date().toLocaleDateString()}`, 14, doc.internal.pageSize.height - 10);
+  doc.save(`ImpactLens_Report_${org?.name || "NGO"}_Q1_2025.pdf`);
+};
+
 // ─── PAGE: DASHBOARD ─────────────────────────────────────────────
-const Dashboard = ({ org, activities, setPage }) => {
+const Dashboard = ({ org, activities, volunteers, setPage }) => {
   const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
   const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
   const totV = activities.reduce((s, a) => s + (Number(a.volunteers) || 0), 0);
   const { costPerBeneficiary, retentionRate, avgImpactScore } = calcMetrics(activities);
+  const topVols = [...volunteers].sort((a, b) => (b.hours_logged || 0) - (a.hours_logged || 0)).slice(0, 3);
   const pie = [
     { name: "Education", value: 42, color: C.green },
     { name: "Healthcare", value: 28, color: C.amber },
@@ -425,24 +574,18 @@ const Dashboard = ({ org, activities, setPage }) => {
       </div>
 
       <div className="crt" style={{ marginBottom: 18 }}>
-        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
-          <div className="sa" style={{ background: C.amber }} />
-          <div className="sl">Cost per Beneficiary</div>
-          <div className="sv">₹{costPerBeneficiary.toLocaleString()}</div>
-          <div className="sd"><Icon name="trending" size={11} color={C.green} />Lower is better</div>
-        </div>
-        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
-          <div className="sa" style={{ background: C.blue }} />
-          <div className="sl">Volunteer Retention</div>
-          <div className="sv">{retentionRate}%</div>
-          <div className={`sd ${retentionRate < 50 ? "neg" : ""}`}><Icon name="users" size={11} color={retentionRate < 50 ? C.red : C.green} />{retentionRate >= 70 ? "Strong" : retentionRate >= 50 ? "Moderate" : "Needs attention"}</div>
-        </div>
-        <div className="sc" style={{ border: `1px solid ${C.border}` }}>
-          <div className="sa" style={{ background: C.green }} />
-          <div className="sl">Avg Impact Score</div>
-          <div className="sv">{avgImpactScore}</div>
-          <div className="sd"><Icon name="sparkle" size={11} color={C.green} />Across all programmes</div>
-        </div>
+        {[
+          { label: "Cost per Beneficiary", value: `₹${costPerBeneficiary.toLocaleString()}`, delta: "Lower is better", color: C.amber, neg: false },
+          { label: "Volunteer Retention", value: `${retentionRate}%`, delta: retentionRate >= 70 ? "Strong" : retentionRate >= 50 ? "Moderate" : "Needs attention", color: retentionRate >= 50 ? C.green : C.red, neg: retentionRate < 50 },
+          { label: "Avg Impact Score", value: avgImpactScore.toString(), delta: "Across all programmes", color: C.green, neg: false },
+        ].map(s => (
+          <div key={s.label} className="sc">
+            <div className="sa" style={{ background: s.color }} />
+            <div className="sl">{s.label}</div>
+            <div className="sv">{s.value}</div>
+            <div className={`sd ${s.neg ? "neg" : ""}`}><Icon name="trending" size={11} color={s.color} />{s.delta}</div>
+          </div>
+        ))}
       </div>
 
       <div className="cr">
@@ -462,11 +605,11 @@ const Dashboard = ({ org, activities, setPage }) => {
               <AreaChart data={SEED.monthly}>
                 <defs>
                   <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.green} stopOpacity={0.18} />
+                    <stop offset="0%" stopColor={C.green} stopOpacity={0.2} />
                     <stop offset="100%" stopColor={C.green} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="aa" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.amber} stopOpacity={0.13} />
+                    <stop offset="0%" stopColor={C.amber} stopOpacity={0.15} />
                     <stop offset="100%" stopColor={C.amber} stopOpacity={0} />
                   </linearGradient>
                 </defs>
@@ -502,24 +645,25 @@ const Dashboard = ({ org, activities, setPage }) => {
           </div>
         </div>
         <div className="card">
-          <div className="ch"><div><div className="ct">Programme Mix</div><div className="cs">Budget by sector</div></div></div>
-          <div className="cb" style={{ paddingTop: 0 }}>
-            <ResponsiveContainer width="100%" height={120}>
-              <PieChart>
-                <Pie data={pie} cx="50%" cy="50%" innerRadius={36} outerRadius={54} paddingAngle={2} dataKey="value">
-                  {pie.map((e, i) => <Cell key={i} fill={e.color} />)}
-                </Pie>
-                <Tooltip formatter={v => `${v}%`} contentStyle={{ background: C.raised, border: `1px solid ${C.border}`, borderRadius: 6, fontSize: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px 10px", marginTop: 6 }}>
-              {pie.map(d => (
-                <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: C.textMd }}>
-                  <div style={{ width: 6, height: 6, borderRadius: 1, background: d.color, flexShrink: 0 }} />
-                  {d.name} — {d.value}%
+          <div className="ch">
+            <div><div className="ct">Top Volunteers</div><div className="cs">By hours logged this quarter</div></div>
+            <button className="btn bg bs" onClick={() => setPage("volunteers")}>View all</button>
+          </div>
+          <div className="cb" style={{ padding: "12px 0" }}>
+            {topVols.map((v, i) => (
+              <div key={v.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 22px", borderBottom: i < topVols.length - 1 ? `1px solid ${C.border}` : "none" }}>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontWeight: 600, color: C.textDim, width: 20 }}>{i + 1}</div>
+                <div className="va" style={{ width: 32, height: 32, fontSize: 13 }}>{v.name[0]}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{v.name}</div>
+                  <div style={{ fontSize: 11, color: C.textDim }}>{v.role}</div>
                 </div>
-              ))}
-            </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontFamily: "'Geist Mono',monospace", fontSize: 13, color: C.text }}>{v.hours_logged}h</div>
+                  <div style={{ fontSize: 10, color: C.textDim }}>{v.events_attended} events</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -576,38 +720,40 @@ const LogActivity = ({ org, onSave, setPage, showToast }) => {
   };
 
   return (
-    <div className="content" style={{ maxWidth: 660 }}>
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Log Programme</div>
-        <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Record a field activity, camp, or training event</div>
-      </div>
-      <div className="card">
-        <div className="cb">
-          <div className="fg">
-            <div className="fd ff"><label>Programme Name</label><input placeholder="e.g. Digital Literacy Drive — Kurla" value={form.name} onChange={e => set("name", e.target.value)} /></div>
-            <div className="fd"><label>Type</label>
-              <select value={form.type} onChange={e => set("type", e.target.value)}>
-                {["Education", "Healthcare", "Livelihood", "Environment", "Other"].map(t => <option key={t}>{t}</option>)}
-              </select>
-            </div>
-            <div className="fd"><label>Status</label>
-              <select value={form.status} onChange={e => set("status", e.target.value)}>
-                <option>Active</option><option>Completed</option><option>Planned</option>
-              </select>
-            </div>
-            <div className="fd"><label>Date</label><input type="date" value={form.activity_date} onChange={e => set("activity_date", e.target.value)} /></div>
-            <div className="fd"><label>Location</label><input placeholder="e.g. Dharavi, Mumbai" value={form.location} onChange={e => set("location", e.target.value)} /></div>
-            <div className="fd"><label>Volunteers Deployed</label><input type="number" min="0" placeholder="0" value={form.volunteers} onChange={e => set("volunteers", e.target.value)} /></div>
-            <div className="fd"><label>Beneficiaries Reached</label><input type="number" min="0" placeholder="0" value={form.beneficiaries} onChange={e => set("beneficiaries", e.target.value)} /></div>
-            <div className="fd ff"><label>Funds Utilised (₹)</label><input type="number" min="0" placeholder="0" value={form.funds_utilized} onChange={e => set("funds_utilized", e.target.value)} /></div>
-            <div className="fd ff"><label>Outcomes & Description</label><textarea placeholder="Describe key outcomes, challenges, and observations..." value={form.description} onChange={e => set("description", e.target.value)} /></div>
-          </div>
+    <div className="content">
+      <div style={{ maxWidth: 620 }}>
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 600 }}>Log Programme</div>
+          <div style={{ fontSize: 12, color: C.textDim, marginTop: 4 }}>Record a field activity, camp, or training event</div>
         </div>
-        <div className="mf">
-          <button className="btn bg" onClick={() => setPage("dashboard")}>Cancel</button>
-          <button className="btn bp" onClick={submit} disabled={loading}>
-            {loading ? "Saving…" : <><Icon name="check" size={13} />Save Activity</>}
-          </button>
+        <div className="card">
+          <div className="cb">
+            <div className="fg">
+              <div className="fd ff"><label>Programme Name</label><input placeholder="e.g. Digital Literacy Drive — Kurla" value={form.name} onChange={e => set("name", e.target.value)} /></div>
+              <div className="fd"><label>Type</label>
+                <select value={form.type} onChange={e => set("type", e.target.value)}>
+                  {["Education", "Healthcare", "Livelihood", "Environment", "Other"].map(t => <option key={t}>{t}</option>)}
+                </select>
+              </div>
+              <div className="fd"><label>Status</label>
+                <select value={form.status} onChange={e => set("status", e.target.value)}>
+                  <option>Active</option><option>Completed</option><option>Planned</option>
+                </select>
+              </div>
+              <div className="fd"><label>Date</label><input type="date" value={form.activity_date} onChange={e => set("activity_date", e.target.value)} /></div>
+              <div className="fd"><label>Location</label><input placeholder="e.g. Dharavi, Mumbai" value={form.location} onChange={e => set("location", e.target.value)} /></div>
+              <div className="fd"><label>Volunteers Deployed</label><input type="number" min="0" placeholder="0" value={form.volunteers} onChange={e => set("volunteers", e.target.value)} /></div>
+              <div className="fd"><label>Beneficiaries Reached</label><input type="number" min="0" placeholder="0" value={form.beneficiaries} onChange={e => set("beneficiaries", e.target.value)} /></div>
+              <div className="fd ff"><label>Funds Utilised (₹)</label><input type="number" min="0" placeholder="0" value={form.funds_utilized} onChange={e => set("funds_utilized", e.target.value)} /></div>
+              <div className="fd ff"><label>Outcomes & Description</label><textarea placeholder="Describe key outcomes, challenges, and observations..." value={form.description} onChange={e => set("description", e.target.value)} /></div>
+            </div>
+          </div>
+          <div className="mf">
+            <button className="btn bg" onClick={() => setPage("dashboard")}>Cancel</button>
+            <button className="btn bp" onClick={submit} disabled={loading}>
+              {loading ? "Saving…" : <><Icon name="check" size={13} />Save Activity</>}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -618,19 +764,19 @@ const LogActivity = ({ org, onSave, setPage, showToast }) => {
 const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" });
+  const [form, setForm] = useState({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "", hours_logged: 0, events_attended: 0 });
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "" });
+    setForm({ name: "", role: "Field Coordinator", email: "", phone: "", skills: "", hours_logged: 0, events_attended: 0 });
     setModal(true);
   };
 
   const openEdit = (v) => {
     setEditing(v);
-    setForm({ name: v.name, role: v.role || "Field Coordinator", email: v.email || "", phone: v.phone || "", skills: v.skills || "" });
+    setForm({ name: v.name, role: v.role || "Field Coordinator", email: v.email || "", phone: v.phone || "", skills: v.skills || "", hours_logged: v.hours_logged || 0, events_attended: v.events_attended || 0 });
     setModal(true);
   };
 
@@ -638,12 +784,13 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
     if (!form.name) { showToast("Name is required.", "err"); return; }
     setLoading(true);
     try {
+      const payload = { ...form, hours_logged: +form.hours_logged || 0, events_attended: +form.events_attended || 0 };
       if (editing) {
-        if (!isDemo) await supabase.from("volunteers").update(form).eq("id", editing.id);
-        setVolunteers(v => v.map(x => x.id === editing.id ? { ...x, ...form } : x));
+        await db.updateVolunteer(editing.id, payload);
+        setVolunteers(v => v.map(x => x.id === editing.id ? { ...x, ...payload } : x));
         showToast("Volunteer updated.");
       } else {
-        const rec = await db.addVolunteer(org.id, form);
+        const rec = await db.addVolunteer(org.id, payload);
         setVolunteers(v => [rec, ...v]);
         showToast("Volunteer registered.");
       }
@@ -653,43 +800,54 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   };
 
   const deleteVol = async (id) => {
-    if (!window.confirm("Remove this volunteer?")) return;
+    if (!window.confirm("Remove this volunteer from the registry?")) return;
     try {
-      if (!isDemo) await supabase.from("volunteers").delete().eq("id", id);
+      await db.deleteVolunteer(id);
       setVolunteers(v => v.filter(x => x.id !== id));
       showToast("Volunteer removed.");
     } catch { showToast("Failed to delete.", "err"); }
   };
 
+  const sorted = [...volunteers].sort((a, b) => (b.hours_logged || 0) - (a.hours_logged || 0));
+
   return (
     <div className="content">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
         <div>
-          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Volunteer Registry</div>
-          <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>{volunteers.length} registered · {volunteers.reduce((s, v) => s + (v.hours_logged || 0), 0).toLocaleString()} total hours</div>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 600 }}>Volunteer Registry</div>
+          <div style={{ fontSize: 12, color: C.textDim, marginTop: 4 }}>{volunteers.length} registered · {volunteers.reduce((s, v) => s + (v.hours_logged || 0), 0).toLocaleString()} total hours</div>
         </div>
         <button className="btn bp" onClick={openAdd}><Icon name="plus" size={13} />Register Volunteer</button>
       </div>
 
       <div className="vg">
-        {volunteers.map(v => (
-          <div key={v.id} className="vc">
-            <div className="vh">
-              <div className="va">{v.name[0]}</div>
-              <span className="badge bd2">{v.role || "Volunteer"}</span>
+        {sorted.map(v => {
+          const perf = volPerformance(v);
+          return (
+            <div key={v.id} className="vc">
+              <div className="vh">
+                <div className="va">{v.name[0]}</div>
+                <span className={`badge ${perf.cls}`}>{perf.label}</span>
+              </div>
+              <div className="vn">{v.name}</div>
+              <div className="vr">{v.role || "Volunteer"}</div>
+              {v.email && <div style={{ fontSize: 11, color: C.textDim, marginTop: 2 }}>{v.email}</div>}
+              <div className="vs">
+                <div><div className="vv">{v.hours_logged || 0}</div><div className="vl">Hours</div></div>
+                <div><div className="vv">{v.events_attended || 0}</div><div className="vl">Events</div></div>
+              </div>
+              {perf.label === "Needs Engagement" && (
+                <div style={{ marginTop: 10, padding: "8px 10px", background: C.amberDim, borderRadius: 6, fontSize: 11, color: C.amber, border: `1px solid ${C.amber}33` }}>
+                  Low activity — consider reaching out to re-engage.
+                </div>
+              )}
+              <div className="vc-actions">
+                <div className="vc-btn" onClick={() => openEdit(v)}>Edit</div>
+                <div className="vc-btn del" onClick={() => deleteVol(v.id)}>Remove</div>
+              </div>
             </div>
-            <div className="vn">{v.name}</div>
-            {v.email && <div className="vr">{v.email}</div>}
-            <div className="vs">
-              <div><div className="vv">{v.hours_logged || 0}</div><div className="vl">Hours</div></div>
-              <div><div className="vv">{v.events_attended || 0}</div><div className="vl">Events</div></div>
-            </div>
-            <div className="vc-actions">
-              <div className="vc-btn" onClick={() => openEdit(v)}>Edit</div>
-              <div className="vc-btn del" onClick={() => deleteVol(v.id)}>Remove</div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {modal && (
@@ -697,7 +855,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="mh">
               <div className="mt">{editing ? "Edit Volunteer" : "Register Volunteer"}</div>
-              <div className="ms">{editing ? "Update volunteer details" : "Add a new member to your registry"}</div>
+              <div className="ms">{editing ? "Update details, hours and events attended" : "Add a new member to your registry"}</div>
             </div>
             <div className="mb">
               <div className="fg">
@@ -709,6 +867,8 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
                 </div>
                 <div className="fd"><label>Email</label><input type="email" placeholder="email@example.com" value={form.email} onChange={e => set("email", e.target.value)} /></div>
                 <div className="fd"><label>Phone</label><input placeholder="+91 99999 99999" value={form.phone} onChange={e => set("phone", e.target.value)} /></div>
+                <div className="fd"><label>Hours Logged</label><input type="number" min="0" placeholder="0" value={form.hours_logged} onChange={e => set("hours_logged", e.target.value)} /></div>
+                <div className="fd"><label>Events Attended</label><input type="number" min="0" placeholder="0" value={form.events_attended} onChange={e => set("events_attended", e.target.value)} /></div>
                 <div className="fd ff"><label>Skills</label><input placeholder="e.g. Teaching, First Aid, Data Entry" value={form.skills} onChange={e => set("skills", e.target.value)} /></div>
               </div>
             </div>
@@ -723,39 +883,28 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast }) => {
   );
 };
 
-// ─── PAGE: REPORTS + AI NARRATIVE ────────────────────────────────
+// ─── PAGE: REPORTS ───────────────────────────────────────────────
 const Reports = ({ org, activities, showToast }) => {
   const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
   const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
   const { costPerBeneficiary } = calcMetrics(activities);
   const [aiText, setAiText] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
-  const generateAiReport = async () => {
-    setAiLoading(true);
-    setAiText("");
+  const openInClaude = () => {
     const summary = activities.slice(0, 5).map(a =>
       `${a.name} (${a.type}): ${a.beneficiaries} beneficiaries, ${a.volunteers} volunteers, ₹${a.funds_utilized} utilised`
     ).join("; ");
-    const prompt = `You are writing a donor impact narrative for ${org?.name || "an NGO"} based in ${org?.city || "India"}. Here is their Q1 2025 data: ${summary}. Total beneficiaries: ${totB}. Total funds: ₹${totF}. Cost per beneficiary: ₹${costPerBeneficiary}. Write a compelling, concise 3-paragraph impact narrative (150 words max) suitable for a donor report. Be specific, human, and data-driven. Do not use bullet points.`;
+    const prompt = `You are writing a donor impact narrative for ${org?.name || "an NGO"} based in ${org?.city || "India"}. Here is their Q1 2025 programme data: ${summary}. Total beneficiaries reached: ${totB}. Total funds utilised: ₹${totF}. Cost per beneficiary: ₹${costPerBeneficiary}. Please write a compelling, concise 3-paragraph impact narrative (around 150 words) suitable for a donor report. Be specific, human, and data-driven. Do not use bullet points.`;
+    window.open(`https://claude.ai/new?q=${encodeURIComponent(prompt)}`, "_blank");
+  };
 
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-      const data = await res.json();
-      const text = data.content?.map(c => c.text || "").join("") || "Unable to generate report.";
-      setAiText(text);
-    } catch {
-      setAiText("AI report generation requires an active API connection.");
-    }
-    setAiLoading(false);
+  const handleExportPDF = async () => {
+    setPdfLoading(true);
+    try { await exportPDF(org, activities); showToast("PDF exported successfully."); }
+    catch { showToast("PDF export failed.", "err"); }
+    setPdfLoading(false);
   };
 
   const bkd = [
@@ -767,19 +916,22 @@ const Reports = ({ org, activities, showToast }) => {
 
   return (
     <div className="content">
-      <div className="rh">
+      <div style={{ background: `linear-gradient(135deg,${C.surface},${C.raised})`, border: `1px solid ${C.border}`, borderRadius: 12, padding: 32, marginBottom: 20, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <div>
-          <div className="rtt">Impact Report — Q1 2025</div>
-          <div className="rs2">{org?.name || "NGO"} · January – March 2025</div>
-          <div className="rst">
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 28, fontWeight: 700, marginBottom: 4 }}>Impact Report — Q1 2025</div>
+          <div style={{ fontSize: 12, color: C.textDim }}>{org?.name || "NGO"} · January – March 2025</div>
+          <div style={{ display: "flex", gap: 36, marginTop: 20 }}>
             {[[totB.toLocaleString(), "Beneficiaries"], ["38", "Volunteers"], [`₹${(totF / 100000).toFixed(2)}L`, "Utilised"], ["82", "Trust Score"]].map(([v, l]) => (
-              <div key={l}><div className="rv2">{v}</div><div className="rl2">{l}</div></div>
+              <div key={l}>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 34, fontWeight: 600, lineHeight: 1 }}>{v}</div>
+                <div style={{ fontSize: 10, color: C.textDim, textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>{l}</div>
+              </div>
             ))}
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-          <button className="btn bg bs" onClick={() => showToast("PDF export — coming soon.")}><Icon name="download" size={13} />Export PDF</button>
-          <button className="btn bp bs" onClick={() => showToast("Shareable link copied.")}><Icon name="share" size={13} />Share</button>
+          <button className="btn bg bs" onClick={handleExportPDF} disabled={pdfLoading}><Icon name="download" size={13} />{pdfLoading ? "Exporting…" : "Export PDF"}</button>
+          <button className="btn bp bs" onClick={() => { navigator.clipboard?.writeText(window.location.href); showToast("Link copied."); }}><Icon name="share" size={13} />Share</button>
         </div>
       </div>
 
@@ -787,30 +939,24 @@ const Reports = ({ org, activities, showToast }) => {
         <div className="ch">
           <div>
             <div className="ct">AI Impact Narrative</div>
-            <div className="cs">Claude reads your data and writes a donor-ready report automatically</div>
+            <div className="cs">Opens Claude with your data pre-loaded — get a donor report in seconds</div>
           </div>
-          <button className="btn bam bs" onClick={generateAiReport} disabled={aiLoading}>
-            <Icon name="sparkle" size={13} />{aiLoading ? "Generating…" : "Generate Report"}
+          <button className="btn bgo bs" onClick={openInClaude}>
+            <div className="claude-logo">C</div>
+            Open in Claude
           </button>
         </div>
         <div className="cb">
-          {!aiText && !aiLoading && (
-            <div style={{ color: C.textDim, fontSize: 13, textAlign: "center", padding: "16px 0" }}>
-              Click "Generate Report" to have AI write a donor narrative based on your real programme data.
+          <div style={{ background: `linear-gradient(135deg,#161e14,#0e1510)`, border: `1px solid rgba(91,158,114,.2)`, borderRadius: 10, padding: 22 }}>
+            <div className="ai-label"><Icon name="sparkle" size={11} color={C.green} />How it works</div>
+            <div style={{ fontSize: 13, color: C.textMd, lineHeight: 1.8 }}>
+              Click "Open in Claude" and a new tab will open with your NGO's programme data already written into the prompt. Claude will generate a professional donor narrative — copy it back here or paste it directly into your report.
             </div>
-          )}
-          {aiLoading && (
-            <div className="ai-loading">
-              <div className="spin" />
-              Analysing programme data and generating narrative…
+            <div className="ai-powered">
+              <div className="claude-logo">C</div>
+              Powered by Claude · Anthropic
             </div>
-          )}
-          {aiText && (
-            <div className="ai-box">
-              <div className="ai-label"><Icon name="sparkle" size={11} color={C.green} />AI-Generated Donor Narrative</div>
-              <div className="ai-text">{aiText}</div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -818,7 +964,7 @@ const Reports = ({ org, activities, showToast }) => {
         <div className="card">
           <div className="ch"><div><div className="ct">Beneficiary Growth</div><div className="cs">Month-over-month</div></div></div>
           <div className="cb" style={{ paddingTop: 8 }}>
-            <ResponsiveContainer width="100%" height={170}>
+            <ResponsiveContainer width="100%" height={180}>
               <LineChart data={SEED.monthly}>
                 <CartesianGrid strokeDasharray="2 4" stroke={C.border} vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
@@ -846,7 +992,7 @@ const Reports = ({ org, activities, showToast }) => {
       </div>
 
       <div className="card" style={{ marginBottom: 18 }}>
-        <div className="ch"><div><div className="ct">Programme Impact Scores</div><div className="cs">Data-driven rating with improvement suggestions</div></div></div>
+        <div className="ch"><div><div className="ct">Programme Impact Scores</div><div className="cs">Data-driven ratings with improvement suggestions</div></div></div>
         <div style={{ overflowX: "auto" }}>
           <table>
             <thead><tr><th>Programme</th><th>Score</th><th>Grade</th><th>Key Suggestion</th></tr></thead>
@@ -859,9 +1005,7 @@ const Reports = ({ org, activities, showToast }) => {
                     <td>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <span className="mono">{score}</span>
-                        <div style={{ width: 80 }}>
-                          <div className="prog"><div className="pf" style={{ width: `${score}%` }} /></div>
-                        </div>
+                        <div style={{ width: 80 }}><div className="prog"><div className="pf" style={{ width: `${score}%` }} /></div></div>
                       </div>
                     </td>
                     <td><span className={`score-badge score-${grade.toLowerCase()}`}>{grade}</span></td>
@@ -902,25 +1046,24 @@ const Reports = ({ org, activities, showToast }) => {
   );
 };
 
-// ─── PAGE: ANALYTICS / PREDICTIONS ───────────────────────────────
+// ─── PAGE: ANALYTICS ─────────────────────────────────────────────
 const Analytics = ({ activities }) => {
-  const pred = calcPredictions(activities);
+  const pred = calcPredictions();
   const { costPerBeneficiary, retentionRate } = calcMetrics(activities);
+  const forecastData = [...SEED.monthly, { month: "Apr*", beneficiaries: pred.beneficiaries, volunteers: pred.volunteers, donations: pred.funds }];
 
   const insights = [
     { color: C.green, text: `Beneficiary reach is projected to grow ${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% next month based on your 6-month trend — on track to exceed ${Math.round(pred.beneficiaries / 100) * 100} people.` },
     { color: pred.bGrowth > 10 ? C.green : C.amber, text: `At ₹${costPerBeneficiary} per beneficiary, your cost efficiency is ${costPerBeneficiary < 150 ? "excellent" : costPerBeneficiary < 300 ? "average" : "high"}. ${costPerBeneficiary > 300 ? "Consider consolidating smaller programmes to reduce overhead." : "Maintain current resource allocation."}` },
-    { color: retentionRate >= 70 ? C.green : C.amber, text: `Volunteer retention stands at ${retentionRate}%. ${retentionRate < 70 ? "Increase volunteer engagement activities — recognition and flexible scheduling improve retention significantly." : "Strong retention. Consider building a volunteer leadership programme."}` },
-    { color: C.blue, text: `Fund disbursement is trending ${pred.fGrowth > 0 ? "upward" : "downward"} at ${Math.abs(pred.fGrowth)}% month-over-month. ${pred.fGrowth > 15 ? "Strong donor confidence — this is a good time to approach new institutional funders." : "Focus on donor retention through quarterly impact reports."}` },
+    { color: retentionRate >= 70 ? C.green : C.amber, text: `Volunteer retention stands at ${retentionRate}%. ${retentionRate < 70 ? "Increase volunteer engagement — recognition and flexible scheduling improve retention significantly." : "Strong retention. Consider building a volunteer leadership programme."}` },
+    { color: C.blue, text: `Fund disbursement is trending ${pred.fGrowth > 0 ? "upward" : "downward"} at ${Math.abs(pred.fGrowth)}% month-over-month. ${pred.fGrowth > 15 ? "Strong donor confidence — a good time to approach new institutional funders." : "Focus on donor retention through quarterly impact reports."}` },
   ];
-
-  const forecastData = [...SEED.monthly, { month: "Apr*", beneficiaries: pred.beneficiaries, volunteers: pred.volunteers, donations: pred.funds }];
 
   return (
     <div className="content">
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 22, fontWeight: 600 }}>Predictive Analytics</div>
-        <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Next-month forecasts based on your historical trend data</div>
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 600 }}>Predictive Analytics</div>
+        <div style={{ fontSize: 12, color: C.textDim, marginTop: 4 }}>Next-month forecasts based on your historical trend data</div>
       </div>
 
       <div className="crt" style={{ marginBottom: 18 }}>
@@ -954,12 +1097,12 @@ const Analytics = ({ activities }) => {
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
               <Tooltip content={<CT />} />
-              <Area type="monotone" dataKey="beneficiaries" stroke={C.green} strokeWidth={2} fill="url(#fg2)" name="beneficiaries" dot={(props) => {
-                if (props.index === forecastData.length - 1) {
-                  return <circle key={props.index} cx={props.cx} cy={props.cy} r={5} fill={C.amber} stroke={C.amber} strokeWidth={2} />;
-                }
-                return <circle key={props.index} cx={props.cx} cy={props.cy} r={3} fill={C.green} strokeWidth={0} />;
-              }} />
+              <Area type="monotone" dataKey="beneficiaries" stroke={C.green} strokeWidth={2} fill="url(#fg2)" name="beneficiaries"
+                dot={(props) => {
+                  const isLast = props.index === forecastData.length - 1;
+                  return <circle key={props.index} cx={props.cx} cy={props.cy} r={isLast ? 5 : 3} fill={isLast ? C.amber : C.green} strokeWidth={0} />;
+                }}
+              />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -967,7 +1110,7 @@ const Analytics = ({ activities }) => {
 
       <div className="card">
         <div className="ch"><div><div className="ct">Data-Driven Insights</div><div className="cs">Actionable recommendations based on your trends</div></div></div>
-        <div className="cb">
+        <div className="cb" style={{ padding: "8px 22px" }}>
           {insights.map((ins, i) => (
             <div key={i} className="insight-row">
               <div className="insight-dot" style={{ background: ins.color }} />
@@ -980,59 +1123,180 @@ const Analytics = ({ activities }) => {
   );
 };
 
-// ─── PAGE: DONATE ────────────────────────────────────────────────
-const Donate = ({ org, showToast }) => {
-  const [amount, setAmount] = useState(500);
-  const [custom, setCustom] = useState("");
-  const [donor, setDonor] = useState("");
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-  const presets = [250, 500, 1000, 2500, 5000, 10000];
-  const final = custom ? +custom : amount;
+// ─── PAGE: ABOUT ─────────────────────────────────────────────────
+const About = () => (
+  <div className="content">
+    <div className="about-hero">
+      <div className="founder-pill"><Icon name="star" size={12} color={C.gold} />Founded by a student at the intersection of finance & technology</div>
+      <div className="about-title">Measuring what matters.<br /><em>Impact, not just intent.</em></div>
+      <div className="about-subtitle">ImpactLens was built on a simple belief: Indian NGOs do extraordinary work, but lack the financial analytics tools to prove it. We change that.</div>
+    </div>
 
-  const submit = async () => {
-    if (!final) return;
-    setLoading(true);
-    try {
-      await db.addDonation(org.id, { amount: final, donor_name: donor || null, message: msg || null });
-      showToast(`Contribution of ₹${final.toLocaleString()} recorded. Thank you.`);
-      setCustom(""); setDonor(""); setMsg(""); setAmount(500);
-    } catch { showToast("Failed to record.", "err"); }
-    setLoading(false);
-  };
-
-  return (
-    <div className="content" style={{ maxWidth: 480, margin: "0 auto" }}>
-      <div style={{ textAlign: "center", marginBottom: 26 }}>
-        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 600 }}>Support Our Work</div>
-        <div style={{ fontSize: 13, color: C.textMd, marginTop: 6, lineHeight: 1.75 }}>Pay what you can. Every rupee reaches our programmes directly.</div>
-      </div>
-      <div className="card">
-        <div className="cb">
-          <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: C.textDim, marginBottom: 10 }}>Select Amount</div>
-          <div className="ag">
-            {presets.map(p => (
-              <button key={p} className={`ab ${amount === p && !custom ? "sel" : ""}`} onClick={() => { setAmount(p); setCustom(""); }}>
-                ₹{p.toLocaleString()}
-              </button>
-            ))}
+    <div className="cre">
+      <div>
+        <div className="about-section">
+          <div className="about-section-title"><Icon name="about" size={18} color={C.green} />Our Story</div>
+          <div className="about-body">
+            ImpactLens was created by [YOUR NAME], a student deeply interested in the intersection of finance and computer science. While exploring how financial analysis and technology can drive social good, one pattern kept emerging: India's NGO sector is filled with passionate, effective organisations — but most of them struggle to communicate their impact in the language donors understand. Spreadsheets get lost. Reports never get written. Donors lose confidence, not because the work isn't good, but because the data isn't visible.
+            <br /><br />
+            The answer was an analytics platform purpose-built for the realities of Indian NGOs — free to use, simple enough for a field coordinator, and sophisticated enough to satisfy an institutional donor.
           </div>
-          <div className="fd" style={{ marginBottom: 12 }}><label>Custom Amount</label><input type="number" placeholder="₹ Enter amount" value={custom} onChange={e => setCustom(e.target.value)} /></div>
-          <div className="fd" style={{ marginBottom: 12 }}><label>Your Name (optional)</label><input placeholder="Anonymous" value={donor} onChange={e => setDonor(e.target.value)} /></div>
-          <div className="fd" style={{ marginBottom: 18 }}><label>Message (optional)</label><textarea placeholder="A note for the team…" rows={2} value={msg} onChange={e => setMsg(e.target.value)} /></div>
-          <div style={{ background: C.raised, borderRadius: 8, padding: "14px 16px", marginBottom: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: C.textDim, marginBottom: 10 }}>What this funds</div>
-            {[["₹250", "Stationery for 5 children for one month"], ["₹500", "Meals for 20 beneficiaries for one day"], ["₹1,000", "Health consultation for 3 families"], ["₹5,000", "Full livelihood training cohort materials"]].map(([a, d]) => (
-              <div key={a} style={{ display: "flex", gap: 12, marginBottom: 7, fontSize: 12 }}>
-                <span style={{ color: C.green, fontFamily: "'Geist Mono',monospace", minWidth: 52, flexShrink: 0 }}>{a}</span>
-                <span style={{ color: C.textMd }}>{d}</span>
+        </div>
+
+        <div className="about-section">
+          <div className="about-section-title"><Icon name="trending" size={18} color={C.green} />Why Finance + Technology?</div>
+          <div className="about-body">
+            The most underfunded NGOs are often the most impactful — they simply lack the tools to demonstrate that impact in quantifiable terms. Cost per beneficiary, volunteer retention rates, fund utilisation ratios — these are the metrics that move grant committees and corporate donors. ImpactLens applies financial analysis frameworks to social sector data, turning activity logs into the kind of structured reporting that builds institutional trust.
+            <br /><br />
+            Predictive analytics helps NGOs plan forward — not just report backward. When an NGO can say "based on our trend data, we project serving 1,400 beneficiaries next quarter with ₹1.1L in funding," they move from being a charity to being a credible, data-driven organisation.
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="about-section">
+          <div className="about-section-title"><Icon name="shield" size={18} color={C.green} />How ImpactLens Helps NGOs</div>
+          <div className="about-grid">
+            {[
+              { icon: "bar", title: "Financial Transparency", text: "Auto-generate fund utilisation reports that show donors exactly where every rupee went — building the trust that sustains long-term funding." },
+              { icon: "predict", title: "Forward Planning", text: "Predictive models forecast next month's resource needs based on historical trends, helping NGOs plan programmes proactively." },
+              { icon: "sparkle", title: "AI Donor Reports", text: "Claude reads your programme data and writes compelling donor narratives — in seconds, not hours." },
+              { icon: "users", title: "Volunteer Intelligence", text: "Track performance, identify your top contributors, and flag volunteers who may need re-engagement before they disengage entirely." },
+            ].map(c => (
+              <div key={c.title} className="about-card">
+                <div className="about-card-icon"><Icon name={c.icon} size={18} color={C.green} /></div>
+                <div className="about-card-title">{c.title}</div>
+                <div className="about-card-text">{c.text}</div>
               </div>
             ))}
           </div>
-          <button className="btn bp" style={{ width: "100%", justifyContent: "center", padding: "11px" }} onClick={submit} disabled={loading}>
-            {loading ? "Processing…" : `Contribute ₹${final.toLocaleString()}`}
-          </button>
-          <div style={{ fontSize: 11, color: C.textDim, textAlign: "center", marginTop: 10 }}>Transparent quarterly reports · 80G eligible</div>
+        </div>
+
+        <div className="about-section" style={{ marginTop: 14 }}>
+          <div className="about-section-title"><Icon name="heart" size={18} color={C.green} />Our Model</div>
+          <div className="about-body">
+            ImpactLens is free for all NGOs — always. We operate on a pay-what-you-can philosophy because we believe access to good financial tooling should not be a privilege. If ImpactLens helps your organisation secure more funding or deliver more impact, a voluntary contribution keeps the platform running. Nothing more, nothing less.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ─── PAGE: CONTACT ───────────────────────────────────────────────
+const ContactPage = () => {
+  const [contactState, contactSubmit] = useForm("xpqojqze");
+  const [feedbackState, feedbackSubmit] = useForm("xpqojqze");
+
+  return (
+    <div className="content">
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 600 }}>Get in Touch</div>
+        <div style={{ fontSize: 12, color: C.textDim, marginTop: 4 }}>Reach out to onboard your NGO, ask questions, or share feedback</div>
+      </div>
+
+      <div className="contact-grid">
+        <div>
+          <div className="card" style={{ marginBottom: 14 }}>
+            <div className="ch"><div className="ct">Contact & Enquiries</div></div>
+            <div className="cb">
+              {contactState.succeeded ? (
+                <div className="form-success">
+                  <Icon name="check" size={20} color={C.green} />
+                  <div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontWeight: 600 }}>Message received</div>
+                  <div style={{ fontSize: 12, color: C.greenLt, marginTop: 4 }}>We'll get back to you at alisiddiq1804@gmail.com within 24 hours.</div>
+                </div>
+              ) : (
+                <form onSubmit={contactSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div className="fd">
+                    <label>Your Name</label>
+                    <input type="text" name="name" placeholder="Organisation or individual name" required />
+                  </div>
+                  <div className="fd">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="your@email.com" required />
+                    <ValidationError field="email" prefix="Email" errors={contactState.errors} className="form-error-msg" />
+                  </div>
+                  <div className="fd">
+                    <label>Type of Enquiry</label>
+                    <select name="enquiry_type">
+                      <option>Onboard my NGO</option>
+                      <option>Partnership opportunity</option>
+                      <option>Technical support</option>
+                      <option>General question</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div className="fd">
+                    <label>Message</label>
+                    <textarea name="message" placeholder="Tell us about your NGO or what you need..." required />
+                    <ValidationError field="message" prefix="Message" errors={contactState.errors} className="form-error-msg" />
+                  </div>
+                  <button type="submit" className="btn bp" style={{ alignSelf: "flex-start" }} disabled={contactState.submitting}>
+                    <Icon name="mail" size={13} />{contactState.submitting ? "Sending…" : "Send Message"}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="card" style={{ marginBottom: 14 }}>
+            <div className="ch"><div className="ct">Platform Feedback</div></div>
+            <div className="cb">
+              {feedbackState.succeeded ? (
+                <div className="form-success">
+                  <Icon name="check" size={20} color={C.green} />
+                  <div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontWeight: 600 }}>Thank you</div>
+                  <div style={{ fontSize: 12, color: C.greenLt, marginTop: 4 }}>Your feedback helps us improve ImpactLens for every NGO.</div>
+                </div>
+              ) : (
+                <form onSubmit={feedbackSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div className="fd">
+                    <label>Email (optional)</label>
+                    <input type="email" name="email" placeholder="Leave blank to stay anonymous" />
+                  </div>
+                  <div className="fd">
+                    <label>How would you rate ImpactLens?</label>
+                    <select name="rating">
+                      <option>Excellent — exactly what NGOs need</option>
+                      <option>Good — a few things could improve</option>
+                      <option>Average — needs significant work</option>
+                      <option>Poor — not useful yet</option>
+                    </select>
+                  </div>
+                  <div className="fd">
+                    <label>What would make ImpactLens more useful?</label>
+                    <textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required />
+                    <ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg" />
+                  </div>
+                  <button type="submit" className="btn bg" style={{ alignSelf: "flex-start" }} disabled={feedbackState.submitting}>
+                    <Icon name="message" size={13} />{feedbackState.submitting ? "Sending…" : "Submit Feedback"}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="ch"><div className="ct">Direct Contact</div></div>
+            <div className="cb" style={{ padding: "14px 22px" }}>
+              {[
+                { label: "Platform Enquiries", val: "alisiddiq1804@gmail.com", icon: "mail" },
+                { label: "For NGOs", val: "Register via the form — we respond within 24 hours", icon: "users" },
+                { label: "Built with", val: "React · Supabase · Claude AI · Vercel", icon: "leaf" },
+              ].map(item => (
+                <div key={item.label} className="contact-item">
+                  <div style={{ color: C.green, marginTop: 2 }}><Icon name={item.icon} size={15} color={C.green} /></div>
+                  <div>
+                    <div className="contact-item-label">{item.label}</div>
+                    <div className="contact-item-val">{item.val}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1068,26 +1332,26 @@ const AuthPage = ({ onAuth }) => {
   return (
     <div className="aw">
       <div className="ac">
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 30 }}>
           <div className="lm"><Icon name="leaf" size={14} color={C.green} /></div>
-          <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>ImpactLens</span>
+          <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 21, fontWeight: 600 }}>ImpactLens</span>
         </div>
         <div className="att">{mode === "login" ? "Welcome back" : "Register your NGO"}</div>
         <div className="ats">{mode === "login" ? "Sign in to your organisation's dashboard" : "Create an account to get started"}</div>
         {err && <div className="aerr"><Icon name="info" size={14} color={C.red} />{err}</div>}
-        <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {mode === "signup" && <>
             <div className="fd"><label>Organisation Name</label><input placeholder="Shiksha Foundation" value={orgName} onChange={e => setOrgName(e.target.value)} /></div>
             <div className="fd"><label>City</label><input placeholder="Mumbai" value={city} onChange={e => setCity(e.target.value)} /></div>
           </>}
           <div className="fd"><label>Email</label><input type="email" placeholder="admin@ngo.org" value={email} onChange={e => setEmail(e.target.value)} /></div>
           <div className="fd"><label>Password</label><input type="password" placeholder="••••••••" value={pw} onChange={e => setPw(e.target.value)} /></div>
-          <button className="btn bp" style={{ width: "100%", justifyContent: "center", padding: "11px", marginTop: 4 }} onClick={submit} disabled={loading}>
+          <button className="btn bp" style={{ width: "100%", justifyContent: "center", padding: "12px", marginTop: 4 }} onClick={submit} disabled={loading}>
             {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
           </button>
         </div>
         {isDemo && (
-          <div style={{ marginTop: 14, padding: "10px 14px", background: C.greenDim, borderRadius: 7, fontSize: 12, color: C.greenLt, border: `1px solid ${C.green}33` }}>
+          <div style={{ marginTop: 16, padding: "11px 14px", background: C.greenDim, borderRadius: 8, fontSize: 12, color: C.greenLt, border: `1px solid ${C.green}33` }}>
             Demo mode — click Sign In to explore with sample data.
           </div>
         )}
@@ -1107,27 +1371,27 @@ const Landing = ({ onEnter }) => (
     <nav className="lnav">
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div className="lm"><Icon name="leaf" size={14} color={C.green} /></div>
-        <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 600, color: C.text }}>ImpactLens</span>
+        <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600, color: C.text }}>ImpactLens</span>
       </div>
       <div style={{ display: "flex", gap: 10 }}>
         <button className="btn bg bs" onClick={onEnter}>Sign in</button>
-        <button className="btn bp bs" onClick={onEnter}>Get started</button>
+        <button className="btn bp bs" onClick={onEnter}>Get started free</button>
       </div>
     </nav>
     <div className="lhero">
       <div className="ley"><Icon name="shield" size={11} color={C.green} />Built for Indian NGOs</div>
       <div className="ltitle">Turn your impact into<br /><em>data donors trust</em></div>
-      <div className="ldesc">Log activities. Track beneficiaries. Auto-generate transparent impact reports your donors can actually read.</div>
+      <div className="ldesc">Log activities. Track beneficiaries. Generate transparent financial reports — and let AI write the donor narrative for you.</div>
       <div className="lacts">
         <button className="btn bp bll" onClick={onEnter}>Start free <Icon name="arrow" size={14} /></button>
-        <span style={{ fontSize: 12, color: C.textDim }}>Pay what you can. No lock-in.</span>
+        <span style={{ fontSize: 12, color: C.textDim }}>Pay what you can · No lock-in</span>
       </div>
     </div>
     <div className="lfeats">
       {[
-        { icon: "sparkle", title: "AI Impact Narratives", desc: "Claude reads your programme data and writes a donor-ready impact report automatically — no writing required." },
-        { icon: "predict", title: "Predictive Analytics", desc: "Forecast next month's reach, volunteer needs, and fund requirements based on your historical trends." },
-        { icon: "shield", title: "Transparency Score", desc: "A composite trust index based on fund utilisation, reach, and reporting frequency. Build donor confidence at a glance." },
+        { icon: "sparkle", title: "AI Impact Narratives", desc: "Claude reads your programme data and writes a compelling donor report in seconds — no writing required." },
+        { icon: "predict", title: "Predictive Analytics", desc: "Forecast next month's beneficiary reach, volunteer needs, and fund requirements based on your real trends." },
+        { icon: "bar", title: "Financial Transparency", desc: "Cost per beneficiary, fund utilisation breakdowns, and a public transparency score — the numbers that move donors." },
       ].map(f => (
         <div key={f.title} className="fc">
           <div className="fi"><Icon name={f.icon} size={22} color={C.green} /></div>
@@ -1138,29 +1402,50 @@ const Landing = ({ onEnter }) => (
     </div>
     <div className="lfoot">
       <div className="lft">© 2025 ImpactLens · Built for India's NGO sector</div>
-      <div className="lft">Pay what you can · 80G eligible contributions</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div className="claude-logo">C</div>
+        <span className="lft">Powered by Claude · Anthropic</span>
+      </div>
     </div>
   </div>
 );
 
-// ─── NAV + META ──────────────────────────────────────────────────
+// ─── NAV CONFIG ──────────────────────────────────────────────────
 const NAV = [
   { id: "dashboard",  icon: "grid",    label: "Overview" },
   { id: "log",        icon: "edit",    label: "Log Activity" },
   { id: "volunteers", icon: "users",   label: "Volunteers" },
   { id: "reports",    icon: "file",    label: "Reports" },
   { id: "analytics",  icon: "predict", label: "Analytics" },
-  { id: "donate",     icon: "heart",   label: "Donate" },
+  { id: "about",      icon: "about",   label: "About" },
+  { id: "contact",    icon: "mail",    label: "Contact" },
 ];
 
 const PAGE_META = {
-  dashboard:  ["Overview",    "Q1 2025"],
-  log:        ["Log Activity","Record a new programme"],
-  volunteers: ["Volunteers",  "Registry & hours"],
-  reports:    ["Reports",     "AI-powered donor documents"],
-  analytics:  ["Analytics",   "Predictions & insights"],
-  donate:     ["Donate",      "Support this NGO"],
+  dashboard:  ["Overview",     "Q1 2025"],
+  log:        ["Log Activity", "Record a new programme"],
+  volunteers: ["Volunteers",   "Registry & performance"],
+  reports:    ["Reports",      "AI-powered donor documents"],
+  analytics:  ["Analytics",    "Predictions & insights"],
+  about:      ["About",        "Our story & philosophy"],
+  contact:    ["Contact",      "Get in touch"],
 };
+
+// ─── SIGN OUT CONFIRM MODAL ──────────────────────────────────────
+const SignOutModal = ({ onConfirm, onCancel }) => (
+  <div className="overlay" onClick={onCancel}>
+    <div className="modal" style={{ width: 380 }} onClick={e => e.stopPropagation()}>
+      <div className="mh">
+        <div className="mt">Sign out?</div>
+        <div className="ms">You'll need to sign in again to access your dashboard.</div>
+      </div>
+      <div className="mf">
+        <button className="btn bg" onClick={onCancel}>Cancel</button>
+        <button className="btn bp" onClick={onConfirm}><Icon name="logout" size={13} />Sign out</button>
+      </div>
+    </div>
+  </div>
+);
 
 // ─── ROOT APP ────────────────────────────────────────────────────
 export default function App() {
@@ -1172,6 +1457,7 @@ export default function App() {
   const [volunteers, setVolunteers] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showSignOut, setShowSignOut] = useState(false);
 
   const showToast = useCallback((msg, type = "ok") => {
     setToast({ msg, type });
@@ -1187,7 +1473,9 @@ export default function App() {
 
   const onLogout = () => {
     if (!isDemo) supabase.auth.signOut();
-    setUser(null); setOrg(null); setView("landing"); setPage("dashboard");
+    setUser(null); setOrg(null);
+    setView("landing"); setPage("dashboard");
+    setShowSignOut(false);
   };
 
   const onSaveActivity = rec => setActivities(prev => [rec, ...prev]);
@@ -1206,8 +1494,15 @@ export default function App() {
             <span className="ln">ImpactLens</span>
           </div>
           <nav className="nav">
-            <div className="ngl">Navigation</div>
-            {NAV.map(n => (
+            <div className="ngl">Main</div>
+            {NAV.slice(0, 5).map(n => (
+              <button key={n.id} className={`ni ${page === n.id ? "active" : ""}`} onClick={() => setPage(n.id)}>
+                <Icon name={n.icon} size={15} color={page === n.id ? C.greenLt : C.textDim} />
+                {n.label}
+              </button>
+            ))}
+            <div className="ngl" style={{ marginTop: 6 }}>Platform</div>
+            {NAV.slice(5).map(n => (
               <button key={n.id} className={`ni ${page === n.id ? "active" : ""}`} onClick={() => setPage(n.id)}>
                 <Icon name={n.icon} size={15} color={page === n.id ? C.greenLt : C.textDim} />
                 {n.label}
@@ -1215,7 +1510,7 @@ export default function App() {
             ))}
           </nav>
           <div className="sb-footer">
-            <div className="op" onClick={onLogout} title="Sign out">
+            <div className="op" onClick={() => setShowSignOut(true)} title="Sign out">
               <div className="oa">{org?.name?.[0] || "N"}</div>
               <div>
                 <div className="on">{org?.name || "Organisation"}</div>
@@ -1236,7 +1531,6 @@ export default function App() {
                 <Icon name="arrow" size={12} color={C.textDim} style={{ transform: "rotate(180deg)" }} />Landing
               </button>
               {page === "dashboard" && <button className="btn bp bs" onClick={() => setPage("log")}><Icon name="plus" size={13} />Log Activity</button>}
-              {page === "reports"   && <button className="btn bg bs" onClick={() => showToast("PDF export — coming soon.")}><Icon name="download" size={13} />Export</button>}
             </div>
           </div>
 
@@ -1244,16 +1538,19 @@ export default function App() {
             <div className="loader"><div className="spin" />Loading data…</div>
           ) : (
             <>
-              {page === "dashboard"  && <Dashboard org={org} activities={activities} setPage={setPage} />}
+              {page === "dashboard"  && <Dashboard org={org} activities={activities} volunteers={volunteers} setPage={setPage} />}
               {page === "log"        && <LogActivity org={org} onSave={onSaveActivity} setPage={setPage} showToast={showToast} />}
               {page === "volunteers" && <Volunteers org={org} volunteers={volunteers} setVolunteers={setVolunteers} showToast={showToast} />}
               {page === "reports"    && <Reports org={org} activities={activities} showToast={showToast} />}
               {page === "analytics"  && <Analytics activities={activities} />}
-              {page === "donate"     && <Donate org={org} showToast={showToast} />}
+              {page === "about"      && <About />}
+              {page === "contact"    && <ContactPage />}
             </>
           )}
         </div>
       </div>
+
+      {showSignOut && <SignOutModal onConfirm={onLogout} onCancel={() => setShowSignOut(false)} />}
 
       {toast && (
         <div className={`toast ${toast.type === "err" ? "err" : ""}`}>
