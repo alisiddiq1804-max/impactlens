@@ -16,28 +16,31 @@ const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
 
 // ─── STONE PATH PALETTE ──────────────────────────────────────────
 const C = {
-  bg:       "#E8E5DF",
-  surface:  "#F5F3EF",
+  bg:       "#FDFBD4",
+  surface:  "#FFFEF0",
   white:    "#FFFFFF",
-  border:   "#D4D0C8",
-  borderLt: "#BEB9B0",
-  text:     "#1C1A17",
-  textMd:   "#6B6358",
-  textDim:  "#968F83",
-  stone:    "#A49A87",
-  stoneLt:  "#BFB8A8",
-  stoneDk:  "#7A7264",
-  sage:     "#A5A58D",
-  sageLt:   "#C2C2A8",
-  sageDk:   "#7A7A68",
-  green:    "#5C7A5C",
-  greenDim: "#EEF3EE",
-  amber:    "#8A6A3A",
-  amberDim: "#F5EFE4",
-  red:      "#8A3A3A",
-  redDim:   "#F5E4E4",
-  blue:     "#3A5A8A",
-  blueDim:  "#E4EBF5",
+  border:   "#E8E0C8",
+  borderLt: "#D4C8A8",
+  text:     "#38240D",
+  textMd:   "#6B4E2A",
+  textDim:  "#A07848",
+  stone:    "#713600",
+  stoneLt:  "#9A5A00",
+  stoneDk:  "#4A2000",
+  sage:     "#C05800",
+  sageLt:   "#D4720A",
+  sageDk:   "#8A3A00",
+  muted:    "#A07848",
+  green:    "#4A6A2A",
+  greenDim: "#EFF5E8",
+  amber:    "#C05800",
+  amberDim: "#FFF3E0",
+  red:      "#8A2A1A",
+  redDim:   "#FFF0EE",
+  blue:     "#2A4A6A",
+  blueDim:  "#EEF3FA",
+  gold:     "#713600",
+  goldDim:  "#FFF3E0",
 };
 
 // ─── ANTHROPIC ICON ──────────────────────────────────────────────
@@ -336,7 +339,8 @@ const css = `
   ::-webkit-scrollbar-thumb{background:var(--stl);border-radius:3px}
 
   /* ── MOBILE RESPONSIVE ── */
-  @media(max-width:768px){
+ @media(max-width:768px){
+    input[type="date"]{width:100%;display:block}
     .app{flex-direction:column}
     .sidebar{display:none}
     .bottom-nav{display:block}
@@ -975,9 +979,7 @@ const Reports = ({ org, activities, showToast, page }) => {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-          <button className="btn bs" style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,.25)" }} onClick={handlePDF} disabled={pdfLoading}><Icon name="download" size={13} />{pdfLoading ? "Exporting…" : "Export PDF"}</button>
-          <button className="btn bs" style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,.25)" }} onClick={() => shareLink("reports", showToast)}><Icon name="share" size={13} />Share</button>
-        </div>
+          
       </div>
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="ch"><div><div className="ct">AI Impact Narrative</div><div className="cs">Let Claude write your donor report from your real programme data</div></div></div>
@@ -1194,6 +1196,23 @@ const ContactPage = () => {
               )}
             </div>
           </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="card">
+            <div className="ch"><div className="ct">Platform Feedback</div></div>
+            <div className="cb">
+              {feedbackState.succeeded ? (
+                <div className="form-success"><Icon name="check" size={22} color={C.green} /><div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Thank you</div><div style={{ fontSize: 12, marginTop: 4 }}>Your feedback helps us improve for every NGO.</div></div>
+              ) : (
+                <form onSubmit={feedbackSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
+                  <div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous" /></div>
+                  <div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div>
+                  <div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required /><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg" /></div>
+                  <button type="submit" className="btn bg bs" style={{ alignSelf: "flex-start" }} disabled={feedbackState.submitting}><Icon name="message" size={13} />{feedbackState.submitting ? "Sending…" : "Submit Feedback"}</button>
+                </form>
+              )}
+            </div>
+          </div>
           <div className="card">
             <div className="ch"><div className="ct">Direct Contact</div></div>
             <div className="cb" style={{ padding: "12px 20px" }}>
@@ -1208,21 +1227,6 @@ const ContactPage = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-        <div className="card">
-          <div className="ch"><div className="ct">Platform Feedback</div></div>
-          <div className="cb">
-            {feedbackState.succeeded ? (
-              <div className="form-success"><Icon name="check" size={22} color={C.green} /><div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Thank you</div><div style={{ fontSize: 12, marginTop: 4 }}>Your feedback helps us improve for every NGO.</div></div>
-            ) : (
-              <form onSubmit={feedbackSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
-                <div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous" /></div>
-                <div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div>
-                <div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required /><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg" /></div>
-                <button type="submit" className="btn bg bs" style={{ alignSelf: "flex-start" }} disabled={feedbackState.submitting}><Icon name="message" size={13} />{feedbackState.submitting ? "Sending…" : "Submit Feedback"}</button>
-              </form>
-            )}
           </div>
         </div>
       </div>
