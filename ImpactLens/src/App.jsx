@@ -964,24 +964,88 @@ const Reports = ({ org, activities, showToast, page }) => {
     { label: "Operations", amount: Math.round(totF * 0.12), pct: 12 },
   ];
   return (
-    <div className="content">
-      <div style={{ background: `linear-gradient(135deg,${C.stoneDk},${C.sage})`, borderRadius: 12, padding: "28px 32px", marginBottom: 18, display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-        <div>
-          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Impact Report — Q1 2025</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>{org?.name || "NGO"} · January – March 2025</div>
-          <div style={{ display: "flex", gap: 28, marginTop: 18, flexWrap: "wrap" }}>
-            {[[totB.toLocaleString(), "Beneficiaries"], ["38", "Volunteers"], [`₹${(totF / 100000).toFixed(2)}L`, "Utilised"], ["82", "Trust Score"]].map(([v, l]) => (
-              <div key={l}>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 600, color: "#fff", lineHeight: 1 }}>{v}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.55)", textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-          
+   <div className="content">
+  <div
+    style={{
+      background: `linear-gradient(135deg,${C.stoneDk},${C.sage})`,
+      borderRadius: 12,
+      padding: "28px 32px",
+      marginBottom: 18,
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 16,
+    }}
+  >
+    <div>
+      <div
+        style={{
+          fontFamily: "'Cormorant Garamond',serif",
+          fontSize: 26,
+          fontWeight: 700,
+          color: "#fff",
+          marginBottom: 4,
+        }}
+      >
+        Impact Report — Q1 2025
       </div>
-      <div className="card" style={{ marginBottom: 16 }}>
+
+      <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>
+        {org?.name || "NGO"} · January – March 2025
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 28,
+          marginTop: 18,
+          flexWrap: "wrap",
+        }}
+      >
+        {[
+          [totB.toLocaleString(), "Beneficiaries"],
+          ["38", "Volunteers"],
+          [`₹${(totF / 100000).toFixed(2)}L`, "Utilised"],
+          ["82", "Trust Score"],
+        ].map(([v, l]) => (
+          <div key={l}>
+            <div
+              style={{
+                fontFamily: "'Cormorant Garamond',serif",
+                fontSize: 30,
+                fontWeight: 600,
+                color: "#fff",
+                lineHeight: 1,
+              }}
+            >
+              {v}
+            </div>
+            <div
+              style={{
+                fontSize: 10,
+                color: "rgba(255,255,255,.55)",
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                marginTop: 4,
+              }}
+            >
+              {l}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+      {/* Buttons or content here */}
+    </div>
+  </div>
+
+  <div className="card" style={{ marginBottom: 16 }}>
+    {/* Card content */}
+  </div>
+</div>
         <div className="ch"><div><div className="ct">AI Impact Narrative</div><div className="cs">Let Claude write your donor report from your real programme data</div></div></div>
         <div className="cb">
           <div className="ai-hero">
