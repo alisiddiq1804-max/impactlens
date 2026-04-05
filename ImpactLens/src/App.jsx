@@ -14,36 +14,38 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
 
-// ─── CHOCOLATE TRUFFLE PALETTE ───────────────────────────────────
+// ─── DESERT DUSK PALETTE ─────────────────────────────────────────
 const C = {
-  bg:       "#FDFBD4",
-  surface:  "#FFFEF0",
-  white:    "#FFFFFF",
-  border:   "#E8DCBC",
-  borderLt: "#D4C49A",
-  text:     "#38240D",
-  textMd:   "#6B4A20",
-  textDim:  "#A07848",
-  stone:    "#713600",
-  stoneLt:  "#9A5000",
-  stoneDk:  "#4A2000",
-  sage:     "#C05800",
-  sageLt:   "#D4720A",
-  sageDk:   "#8A3A00",
-  green:    "#4A6A2A",
-  greenDim: "#F0F5E8",
-  amber:    "#C05800",
+  bg:       "#FDF8F5",
+  surface:  "#FFFFFF",
+  raised:   "#FAF4F0",
+  border:   "#EDD9CF",
+  borderLt: "#DFC4B8",
+  text:     "#2C1810",
+  textMd:   "#7A4A3A",
+  textDim:  "#BF7587",
+  primary:  "#A2574F",
+  primaryLt:"#C4736A",
+  primaryDk:"#7A3830",
+  accent:   "#E68057",
+  accentLt: "#F0A080",
+  accentDk: "#C05A30",
+  rose:     "#BF7587",
+  roseDim:  "#F5ECF0",
+  green:    "#5A7A4A",
+  greenDim: "#EEF5E8",
+  amber:    "#C07830",
   amberDim: "#FFF3DC",
-  red:      "#8A2A1A",
+  red:      "#A03030",
   redDim:   "#FFF0EE",
-  blue:     "#2A4A6A",
+  blue:     "#3A5A7A",
   blueDim:  "#EEF3FA",
 };
 
 // ─── ANTHROPIC ICON ──────────────────────────────────────────────
 const AnthropicIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: "block", flexShrink: 0 }}>
-    <path d="M13.8 3L19 21h-3.4l-1-3.2H9.4L8.4 21H5L10.2 3h3.6zM12 8.2L10.2 14h3.6L12 8.2z" fill={C.stone} />
+    <path d="M13.8 3L19 21h-3.4l-1-3.2H9.4L8.4 21H5L10.2 3h3.6zM12 8.2L10.2 14h3.6L12 8.2z" fill={C.primaryDk} />
   </svg>
 );
 
@@ -76,6 +78,9 @@ const Icon = ({ name, size = 16, color = "currentColor", strokeWidth = 1.6 }) =>
     more:    <svg style={s} viewBox="0 0 24 24"><circle {...p} cx="5" cy="12" r="1" fill={color}/><circle {...p} cx="12" cy="12" r="1" fill={color}/><circle {...p} cx="19" cy="12" r="1" fill={color}/></svg>,
     heart:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
     eye:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle {...p} cx="12" cy="12" r="3"/></svg>,
+    lock:    <svg style={s} viewBox="0 0 24 24"><rect {...p} x="3" y="11" width="18" height="11" rx="2" ry="2"/><path {...p} d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+    doc:     <svg style={s} viewBox="0 0 24 24"><path {...p} d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline {...p} points="14 2 14 8 20 8"/></svg>,
+    scale:   <svg style={s} viewBox="0 0 24 24"><path {...p} d="M12 3v18"/><path {...p} d="M3 9l4-4 4 4"/><path {...p} d="M17 9l4-4-4-4"/><path {...p} d="M3 15h8"/><path {...p} d="M13 15h8"/></svg>,
   };
   return icons[name] || null;
 };
@@ -89,21 +94,21 @@ const css = `
   .app{display:flex;height:100vh;overflow:hidden}
   .sidebar{width:220px;min-width:220px;background:${C.surface};border-right:1px solid ${C.border};display:flex;flex-direction:column;height:100vh;flex-shrink:0}
   .sb-logo{padding:22px 18px 18px;border-bottom:1px solid ${C.border};display:flex;align-items:center;gap:9px}
-  .lm{width:28px;height:28px;background:${C.bg};border:1.5px solid ${C.stone};border-radius:7px;display:flex;align-items:center;justify-content:center;color:${C.stone};flex-shrink:0}
+  .lm{width:28px;height:28px;background:${C.roseDim};border:1.5px solid ${C.primary};border-radius:7px;display:flex;align-items:center;justify-content:center;color:${C.primary};flex-shrink:0}
   .ln{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:${C.text}}
   .nav{padding:8px;flex:1;overflow-y:auto}
   .ngl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${C.textDim};padding:10px 8px 5px;font-weight:500}
   .ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;color:${C.textMd};font-size:13px;border:none;background:none;width:100%;text-align:left;transition:color .12s,background .12s}
-  .ni:hover{background:${C.bg};color:${C.text}}
-  .ni.active{background:${C.amberDim};color:${C.stone};font-weight:500;border-left:2px solid ${C.stone}}
+  .ni:hover{background:${C.raised};color:${C.text}}
+  .ni.active{background:${C.roseDim};color:${C.primary};font-weight:500;border-left:2px solid ${C.primary}}
   .sb-footer{border-top:1px solid ${C.border};padding:12px}
-  .op{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;background:${C.bg};cursor:pointer;transition:background .12s;border:1px solid ${C.border}}
+  .op{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;background:${C.raised};cursor:pointer;transition:background .12s;border:1px solid ${C.border}}
   .op:hover{background:${C.border}}
-  .oa{width:28px;height:28px;border-radius:6px;background:${C.bg};border:1.5px solid ${C.stone};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:${C.stone};flex-shrink:0}
+  .oa{width:28px;height:28px;border-radius:6px;background:${C.roseDim};border:1.5px solid ${C.primary};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:${C.primary};flex-shrink:0}
   .on{font-size:12px;color:${C.text};font-weight:500;line-height:1.3}
   .ot{font-size:10px;color:${C.textDim}}
-  .demo-banner{background:${C.amberDim};border-bottom:1px solid rgba(113,54,0,.2);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;flex-shrink:0}
-  .demo-banner-text{font-size:12.5px;color:${C.stone};display:flex;align-items:center;gap:8px;font-weight:500}
+  .demo-banner{background:${C.amberDim};border-bottom:1px solid rgba(162,87,79,.2);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;flex-shrink:0}
+  .demo-banner-text{font-size:12.5px;color:${C.primary};display:flex;align-items:center;gap:8px;font-weight:500}
   .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
   .tb{height:56px;min-height:56px;border-bottom:1px solid ${C.border};display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:${C.surface};flex-shrink:0}
   .tbl{display:flex;align-items:baseline;gap:10px;min-width:0}
@@ -112,17 +117,17 @@ const css = `
   .tbr{display:flex;align-items:center;gap:8px;flex-shrink:0}
   .content{flex:1;overflow-y:auto;padding:24px}
   .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;border-radius:7px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;padding:7px 14px;transition:all .12s;white-space:nowrap}
-  .bp{background:${C.stone};color:#fff}.bp:hover{background:${C.stoneDk}}
-  .bg{background:transparent;color:${C.textMd};border:1.5px solid ${C.border}}.bg:hover{border-color:${C.borderLt};color:${C.text};background:${C.bg}}
-  .bam{background:${C.sage};color:#fff}.bam:hover{background:${C.sageDk}}
+  .bp{background:${C.primary};color:#fff}.bp:hover{background:${C.primaryDk}}
+  .bg{background:transparent;color:${C.textMd};border:1.5px solid ${C.border}}.bg:hover{border-color:${C.borderLt};color:${C.text};background:${C.raised}}
+  .bac{background:${C.accent};color:#fff}.bac:hover{background:${C.accentDk}}
   .bs{padding:6px 12px;font-size:12px}
-  .card{background:${C.white};border:1px solid ${C.border};border-radius:10px;box-shadow:0 1px 4px rgba(56,36,13,.06)}
+  .card{background:${C.surface};border:1px solid ${C.border};border-radius:10px;box-shadow:0 1px 4px rgba(162,87,79,.06)}
   .ch{padding:16px 20px;border-bottom:1px solid ${C.border};display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .ct{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:${C.text}}
   .cs{font-size:11px;color:${C.textDim};margin-top:2px}
   .cb{padding:20px}
   .sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-  .sc{background:${C.white};border:1px solid ${C.border};border-radius:10px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(56,36,13,.06)}
+  .sc{background:${C.surface};border:1px solid ${C.border};border-radius:10px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(162,87,79,.06)}
   .sa{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
   .sl{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:${C.textDim};font-weight:500}
   .sv{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:${C.text};line-height:1;margin:8px 0 5px;letter-spacing:-0.5px}
@@ -134,34 +139,34 @@ const css = `
   .crt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
   .tbl-wrap{overflow-x:auto}
   table{width:100%;border-collapse:collapse}
-  thead tr{border-bottom:1.5px solid ${C.border};background:${C.surface}}
+  thead tr{border-bottom:1.5px solid ${C.border};background:${C.raised}}
   th{text-align:left;padding:9px 16px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:${C.textDim};font-weight:600;white-space:nowrap}
   td{padding:12px 16px;font-size:13px;color:${C.text};border-bottom:1px solid ${C.border}}
   tbody tr:last-child td{border-bottom:none}
-  tbody tr:hover td{background:${C.surface}}
+  tbody tr:hover td{background:${C.raised}}
   .mono{font-family:'Geist Mono',monospace;font-size:12px;color:${C.textMd}}
   .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
   .bg2{background:${C.greenDim};color:${C.green}}
-  .ba2{background:${C.amberDim};color:${C.sage}}
-  .bd2{background:${C.surface};color:${C.textMd};border:1px solid ${C.border}}
+  .ba2{background:${C.amberDim};color:${C.amber}}
+  .bd2{background:${C.raised};color:${C.textMd};border:1px solid ${C.border}}
   .bb{background:${C.blueDim};color:${C.blue}}
-  .bgo2{background:#FEF9C3;color:#854D0E}
+  .bgo2{background:#FEF3E0;color:#8A5A10}
   .br{background:${C.redDim};color:${C.red}}
-  .bst{background:${C.amberDim};color:${C.stone};border:1px solid rgba(113,54,0,.2)}
+  .bst{background:${C.roseDim};color:${C.primary};border:1px solid rgba(162,87,79,.2)}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ff{grid-column:1/-1}
   .fd{display:flex;flex-direction:column;gap:5px}
   .fd label{font-size:11px;color:${C.textMd};font-weight:500}
-  input,select,textarea{padding:9px 12px;background:${C.white};border:1.5px solid ${C.border};border-radius:7px;color:${C.text};font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color .12s,box-shadow .12s;width:100%}
+  input,select,textarea{padding:9px 12px;background:${C.surface};border:1.5px solid ${C.border};border-radius:7px;color:${C.text};font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color .12s,box-shadow .12s;width:100%}
   input::placeholder,textarea::placeholder{color:${C.textDim}}
-  input:focus,select:focus,textarea:focus{border-color:${C.stone};box-shadow:0 0 0 3px rgba(113,54,0,.1)}
-  select option{background:${C.white}}
+  input:focus,select:focus,textarea:focus{border-color:${C.primary};box-shadow:0 0 0 3px rgba(162,87,79,.1)}
+  select option{background:${C.surface}}
   textarea{resize:vertical;min-height:88px;line-height:1.6}
-  .prog{height:4px;background:${C.bg};border-radius:2px;overflow:hidden;margin-top:5px}
-  .pf{height:100%;background:${C.stone};border-radius:2px;transition:width .5s ease}
-  .pf-sg{height:100%;background:${C.sage};border-radius:2px}
-  .overlay{position:fixed;inset:0;background:rgba(56,36,13,.3);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
-  .modal{background:${C.white};border:1px solid ${C.border};border-radius:12px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(56,36,13,.15)}
+  .prog{height:4px;background:${C.raised};border-radius:2px;overflow:hidden;margin-top:5px}
+  .pf{height:100%;background:${C.primary};border-radius:2px;transition:width .5s ease}
+  .pf-ac{height:100%;background:${C.accent};border-radius:2px}
+  .overlay{position:fixed;inset:0;background:rgba(44,24,16,.3);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+  .modal{background:${C.surface};border:1px solid ${C.border};border-radius:12px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(44,24,16,.15)}
   .mh{padding:22px 26px 18px;border-bottom:1px solid ${C.border}}
   .mt{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600}
   .ms{font-size:12px;color:${C.textDim};margin-top:3px}
@@ -174,53 +179,53 @@ const css = `
   .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
   .rv{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;color:${C.text};line-height:1}
   .rdl{font-size:11px;color:${C.textDim};margin-top:1px}
-  .toast{position:fixed;bottom:80px;right:20px;background:${C.text};color:${C.white};padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 8px 30px rgba(56,36,13,.2);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .2s ease;max-width:300px}
+  .toast{position:fixed;bottom:80px;right:20px;background:${C.text};color:#fff;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 8px 30px rgba(44,24,16,.2);z-index:2000;display:flex;align-items:center;gap:10px;animation:su .2s ease;max-width:300px}
   .toast.err{background:${C.red}}
   @keyframes su{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
   .loader{display:flex;align-items:center;justify-content:center;padding:60px;color:${C.textDim};font-size:13px;gap:10px}
-  .spin{width:16px;height:16px;border:2px solid ${C.border};border-top-color:${C.stone};border-radius:50%;animation:sp .7s linear infinite}
+  .spin{width:16px;height:16px;border:2px solid ${C.border};border-top-color:${C.primary};border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
   .score-badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
-  .score-a{background:#EEF5E8;color:#3A5C2A}
+  .score-a{background:${C.greenDim};color:#3A5C2A}
   .score-b{background:#F0F5E8;color:#4A6C3A}
-  .score-c{background:${C.amberDim};color:${C.stone}}
+  .score-c{background:${C.amberDim};color:${C.amber}}
   .score-d{background:${C.redDim};color:${C.red}}
   .vg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .vc{background:${C.white};border:1.5px solid ${C.border};border-radius:10px;padding:18px;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 4px rgba(56,36,13,.06)}
-  .vc:hover{border-color:${C.stone};box-shadow:0 4px 14px rgba(113,54,0,.1)}
+  .vc{background:${C.surface};border:1.5px solid ${C.border};border-radius:10px;padding:18px;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 4px rgba(162,87,79,.06)}
+  .vc:hover{border-color:${C.primary};box-shadow:0 4px 14px rgba(162,87,79,.1)}
   .vh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-  .va{width:36px;height:36px;border-radius:8px;background:${C.bg};border:1.5px solid ${C.border};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:${C.stone}}
+  .va{width:36px;height:36px;border-radius:8px;background:${C.roseDim};border:1.5px solid ${C.border};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:${C.primary}}
   .vn{font-size:14px;font-weight:600;color:${C.text}}
   .vr2{font-size:11px;color:${C.textDim};margin-top:1px}
   .vs{display:flex;gap:20px;padding-top:12px;border-top:1px solid ${C.border};margin-top:12px}
   .vv{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:${C.text}}
   .vl{font-size:10px;color:${C.textDim};text-transform:uppercase;letter-spacing:1px;margin-top:1px}
   .vc-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid ${C.border}}
-  .vc-btn{flex:1;padding:6px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid ${C.border};background:${C.white};color:${C.textMd};font-family:'Instrument Sans',sans-serif;transition:all .12s;text-align:center}
-  .vc-btn:hover{border-color:${C.stone};color:${C.stone};background:${C.bg}}
+  .vc-btn{flex:1;padding:6px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid ${C.border};background:${C.surface};color:${C.textMd};font-family:'Instrument Sans',sans-serif;transition:all .12s;text-align:center}
+  .vc-btn:hover{border-color:${C.primary};color:${C.primary};background:${C.roseDim}}
   .vc-btn.del:hover{border-color:${C.red};color:${C.red};background:${C.redDim}}
-  .ai-hero{background:linear-gradient(135deg,${C.surface},${C.bg});border:1.5px solid ${C.border};border-radius:12px;padding:32px;text-align:center;position:relative;overflow:hidden}
-  .ai-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(113,54,0,.06),transparent 70%);pointer-events:none}
+  .ai-hero{background:linear-gradient(135deg,${C.raised},${C.roseDim});border:1.5px solid ${C.border};border-radius:12px;padding:32px;text-align:center;position:relative;overflow:hidden}
+  .ai-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(162,87,79,.08),transparent 70%);pointer-events:none}
   .ai-hero-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:${C.text};margin-bottom:10px}
   .ai-hero-desc{font-size:13.5px;color:${C.textMd};line-height:1.75;max-width:480px;margin:0 auto 24px}
-  .ai-open-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:${C.stone};color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:9px;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(113,54,0,.25)}
-  .ai-open-btn:hover{background:${C.stoneDk};transform:translateY(-1px);box-shadow:0 8px 24px rgba(113,54,0,.3)}
+  .ai-open-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:${C.primary};color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:9px;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(162,87,79,.25)}
+  .ai-open-btn:hover{background:${C.primaryDk};transform:translateY(-1px);box-shadow:0 8px 24px rgba(162,87,79,.3)}
   .ai-powered{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;font-size:11px;color:${C.textDim}}
   .insight-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid ${C.border}}
   .insight-row:last-child{border-bottom:none}
   .insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
   .insight-text{font-size:13px;color:${C.textMd};line-height:1.65}
-  .pred-card{background:${C.white};border:1px solid ${C.border};border-radius:9px;padding:18px;box-shadow:0 1px 4px rgba(56,36,13,.06)}
+  .pred-card{background:${C.surface};border:1px solid ${C.border};border-radius:9px;padding:18px;box-shadow:0 1px 4px rgba(162,87,79,.06)}
   .pred-val{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:${C.text};line-height:1;margin:6px 0 3px}
   .pred-lbl{font-size:10px;color:${C.textDim};text-transform:uppercase;letter-spacing:1px;font-weight:500}
   .pred-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:500}
-  .about-hero{background:linear-gradient(135deg,${C.stoneDk},${C.stone});border-radius:12px;padding:44px;margin-bottom:18px;position:relative;overflow:hidden}
+  .about-hero{background:linear-gradient(135deg,${C.primaryDk},${C.primary});border-radius:12px;padding:44px;margin-bottom:18px;position:relative;overflow:hidden}
   .about-hero::before{content:'';position:absolute;bottom:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(255,255,255,.07),transparent 70%);pointer-events:none}
   .about-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.1}
-  .about-title em{color:${C.bg};font-style:italic}
+  .about-title em{color:${C.accentLt};font-style:italic}
   .about-subtitle{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;max-width:680px}
-  .about-card{background:${C.white};border:1px solid ${C.border};border-radius:9px;padding:18px;box-shadow:0 1px 4px rgba(56,36,13,.06)}
-  .about-card-icon{color:${C.stone};margin-bottom:10px}
+  .about-card{background:${C.surface};border:1px solid ${C.border};border-radius:9px;padding:18px;box-shadow:0 1px 4px rgba(162,87,79,.06)}
+  .about-card-icon{color:${C.primary};margin-bottom:10px}
   .about-card-title{font-size:13px;font-weight:600;color:${C.text};margin-bottom:6px}
   .about-card-text{font-size:12px;color:${C.textMd};line-height:1.65}
   .about-body{font-size:13.5px;color:${C.textMd};line-height:1.9}
@@ -229,43 +234,57 @@ const css = `
   .contact-item:last-child{border-bottom:none}
   .contact-item-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:${C.textDim};font-weight:500;margin-bottom:3px}
   .contact-item-val{font-size:13px;color:${C.text}}
-  .form-success{background:${C.greenDim};border:1.5px solid rgba(74,106,42,.3);border-radius:9px;padding:24px;text-align:center;color:${C.green}}
+  .form-success{background:${C.greenDim};border:1.5px solid rgba(90,122,74,.3);border-radius:9px;padding:24px;text-align:center;color:${C.green}}
   .form-error-msg{font-size:11px;color:${C.red};margin-top:4px}
+  .legal-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid ${C.border};padding-bottom:0}
+  .legal-tab{padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:${C.textMd};border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Instrument Sans',sans-serif;transition:color .12s}
+  .legal-tab:hover{color:${C.text}}
+  .legal-tab.active{color:${C.primary};border-bottom-color:${C.primary}}
+  .legal-section{margin-bottom:24px}
+  .legal-section-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:${C.text};margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .legal-body{font-size:13.5px;color:${C.textMd};line-height:1.9}
+  .legal-body p{margin-bottom:12px}
+  .legal-body ul{padding-left:20px;margin-bottom:12px}
+  .legal-body ul li{margin-bottom:6px}
+  .legal-highlight{background:${C.roseDim};border-left:3px solid ${C.primary};padding:12px 16px;border-radius:0 7px 7px 0;margin:14px 0;font-size:13px;color:${C.text}}
   .landing{min-height:100vh;background:${C.bg};display:flex;flex-direction:column}
   .lnav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid ${C.border};background:${C.surface}}
   .lhero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 32px 52px}
-  .ley{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${C.stone};margin-bottom:22px;padding:5px 14px;border:1.5px solid rgba(113,54,0,.25);border-radius:20px;background:${C.surface};font-weight:600}
+  .ley{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${C.primary};margin-bottom:22px;padding:5px 14px;border:1.5px solid rgba(162,87,79,.25);border-radius:20px;background:${C.surface};font-weight:600}
   .ltitle{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5.5vw,70px);font-weight:700;color:${C.text};line-height:1.08;letter-spacing:-1.5px;margin-bottom:18px;max-width:720px}
-  .ltitle em{color:${C.stone};font-style:italic}
+  .ltitle em{color:${C.primary};font-style:italic}
   .ldesc{font-size:16px;color:${C.textMd};max-width:480px;line-height:1.8;margin-bottom:36px}
   .lacts{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
   .bll{padding:12px 26px;font-size:14px;border-radius:8px}
   .try-btn{display:inline-flex;align-items:center;gap:7px;padding:12px 22px;font-size:13.5px;font-weight:500;color:${C.textMd};background:${C.surface};border:1.5px solid ${C.border};border-radius:8px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s}
-  .try-btn:hover{border-color:${C.stone};color:${C.stone}}
+  .try-btn:hover{border-color:${C.primary};color:${C.primary}}
   .lfeats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid ${C.border};background:${C.surface}}
   .fc{background:${C.surface};padding:36px 32px;border-right:1px solid ${C.border}}
   .fc:last-child{border-right:none}
-  .fi{color:${C.stone};margin-bottom:14px}
+  .fi{color:${C.primary};margin-bottom:14px}
   .ftt{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;margin-bottom:8px;color:${C.text}}
   .fd2{font-size:13px;color:${C.textMd};line-height:1.75}
-  .lfoot{padding:18px 48px;border-top:1px solid ${C.border};display:flex;justify-content:space-between;align-items:center;background:${C.surface}}
+  .lfoot{padding:18px 48px;border-top:1px solid ${C.border};display:flex;justify-content:space-between;align-items:center;background:${C.surface};flex-wrap:wrap;gap:10px}
   .lft{font-size:11px;color:${C.textDim}}
+  .lfoot-links{display:flex;gap:16px}
+  .lfoot-link{font-size:11px;color:${C.textDim};cursor:pointer;text-decoration:underline}
+  .lfoot-link:hover{color:${C.primary}}
   .aw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:${C.bg};padding:24px}
-  .ac{width:400px;background:${C.white};border:1px solid ${C.border};border-radius:14px;padding:36px;box-shadow:0 8px 40px rgba(56,36,13,.08)}
+  .ac{width:400px;background:${C.surface};border:1px solid ${C.border};border-radius:14px;padding:36px;box-shadow:0 8px 40px rgba(44,24,16,.08)}
   .att{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:6px}
   .ats{font-size:13px;color:${C.textDim};margin-bottom:22px}
   .asw{text-align:center;margin-top:16px;font-size:12px;color:${C.textDim}}
-  .aln{color:${C.stone};cursor:pointer;text-decoration:underline;font-weight:500}
-  .aerr{background:${C.redDim};border:1px solid rgba(138,42,26,.2);border-radius:7px;padding:10px 14px;font-size:12px;color:${C.red};margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .aln{color:${C.primary};cursor:pointer;text-decoration:underline;font-weight:500}
+  .aerr{background:${C.redDim};border:1px solid rgba(160,48,48,.2);border-radius:7px;padding:10px 14px;font-size:12px;color:${C.red};margin-bottom:16px;display:flex;align-items:center;gap:8px}
   .auth-try{text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid ${C.border}}
   .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:${C.surface};border-top:1.5px solid ${C.border};z-index:100;padding:6px 0 env(safe-area-inset-bottom,6px)}
   .bottom-nav-inner{display:flex;justify-content:space-around;align-items:center}
   .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;cursor:pointer;border:none;background:none;color:${C.textDim};font-family:'Instrument Sans',sans-serif;transition:color .12s;min-width:44px}
-  .bn-item.active{color:${C.stone}}
+  .bn-item.active{color:${C.primary}}
   .bn-item span{font-size:9px;font-weight:500;letter-spacing:.3px}
-  .more-sheet{position:fixed;bottom:64px;left:12px;right:12px;background:${C.white};border:1px solid ${C.border};border-radius:12px;padding:8px;box-shadow:0 8px 32px rgba(56,36,13,.12);z-index:200}
+  .more-sheet{position:fixed;bottom:64px;left:12px;right:12px;background:${C.surface};border:1px solid ${C.border};border-radius:12px;padding:8px;box-shadow:0 8px 32px rgba(44,24,16,.12);z-index:200}
   .more-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:8px;cursor:pointer;color:${C.textMd};font-size:14px;font-weight:500;transition:background .1s}
-  .more-item:hover,.more-item.active{background:${C.bg};color:${C.stone}}
+  .more-item:hover,.more-item.active{background:${C.roseDim};color:${C.primary}}
   ::-webkit-scrollbar{width:5px;height:5px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:${C.border};border-radius:3px}
@@ -291,7 +310,7 @@ const css = `
     .lfeats{grid-template-columns:1fr}
     .fc{border-right:none;border-bottom:1px solid ${C.border}}
     .fc:last-child{border-bottom:none}
-    .lfoot{padding:14px 20px;flex-direction:column;gap:6px;text-align:center}
+    .lfoot{padding:14px 20px;flex-direction:column;gap:8px;text-align:center}
     .lacts{flex-direction:column;gap:10px;align-items:stretch}
     .try-btn{justify-content:center}
     .toast{bottom:76px;right:10px;left:10px;max-width:100%}
@@ -301,6 +320,7 @@ const css = `
     .ai-hero-title{font-size:20px}
     .sv{font-size:28px}
     .demo-banner{padding:10px 14px}
+    .legal-tabs{overflow-x:auto;white-space:nowrap}
   }
   @media(max-width:480px){
     .sr{grid-template-columns:1fr 1fr}
@@ -467,13 +487,13 @@ const exportPDF = async (org, activities) => {
   const doc = new jsPDF();
   const totB = activities.reduce((s, a) => s + (Number(a.beneficiaries) || 0), 0);
   const totF = activities.reduce((s, a) => s + (Number(a.funds_utilized) || 0), 0);
-  doc.setFillColor(74, 32, 0);
+  doc.setFillColor(122, 56, 48);
   doc.rect(0, 0, 210, 48, "F");
-  doc.setTextColor(253, 251, 212);
+  doc.setTextColor(253, 248, 245);
   doc.setFontSize(20); doc.setFont("helvetica", "bold");
   doc.text(org?.name || "NGO", 14, 20);
   doc.setFontSize(11); doc.setFont("helvetica", "normal");
-  doc.setTextColor(200, 180, 150);
+  doc.setTextColor(220, 180, 170);
   doc.text("Impact Report — Q1 2025", 14, 30);
   doc.text(`Generated by ImpactLens · ${new Date().toLocaleDateString("en-IN")}`, 14, 39);
   doc.setTextColor(40, 40, 40);
@@ -487,9 +507,9 @@ const exportPDF = async (org, activities) => {
     startY: 108,
     head: [["Programme", "Type", "Date", "Beneficiaries", "Volunteers", "Funds (INR)"]],
     body: activities.map(a => [a.name, a.type, a.activity_date, a.beneficiaries, a.volunteers, Number(a.funds_utilized).toLocaleString()]),
-    headStyles: { fillColor: [74, 32, 0], textColor: [253, 251, 212], fontSize: 9 },
+    headStyles: { fillColor: [122, 56, 48], textColor: [253, 248, 245], fontSize: 9 },
     bodyStyles: { fontSize: 9, textColor: [40, 40, 40] },
-    alternateRowStyles: { fillColor: [253, 251, 212] },
+    alternateRowStyles: { fillColor: [253, 248, 245] },
   });
   doc.save(`ImpactLens_${org?.name || "NGO"}_Q1_2025.pdf`);
 };
@@ -498,7 +518,7 @@ const exportPDF = async (org, activities) => {
 const CT = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: C.text, boxShadow: "0 4px 16px rgba(56,36,13,.1)" }}>
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: C.text, boxShadow: "0 4px 16px rgba(44,24,16,.1)" }}>
       <div style={{ color: C.textDim, fontSize: 11, marginBottom: 5, fontWeight: 500 }}>{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color || C.text }}>
@@ -525,7 +545,7 @@ const ScoreRing = ({ score = 82 }) => {
         <div className="rsw">
           <svg width="130" height="130" viewBox="0 0 130 130">
             <circle cx={cx} cy={cy} r={r} fill="none" stroke={C.border} strokeWidth="9" />
-            <circle cx={cx} cy={cy} r={r} fill="none" stroke={C.stone} strokeWidth="9" strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke={C.primary} strokeWidth="9" strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" />
           </svg>
           <div className="rc"><div className="rv">{score}</div><div className="rdl">/ 100</div></div>
         </div>
@@ -535,7 +555,7 @@ const ScoreRing = ({ score = 82 }) => {
           <div key={row.label} style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 4 }}>
               <span style={{ color: C.textMd, fontWeight: 500 }}>{row.label}</span>
-              <span style={{ color: C.stone, fontFamily: "'Geist Mono',monospace", fontSize: 11 }}>{row.val}</span>
+              <span style={{ color: C.primary, fontFamily: "'Geist Mono',monospace", fontSize: 11 }}>{row.val}</span>
             </div>
             <div className="prog"><div className="pf" style={{ width: `${row.pct}%` }} /></div>
           </div>
@@ -549,10 +569,10 @@ const ScoreRing = ({ score = 82 }) => {
 const DemoBanner = ({ onSignUp }) => (
   <div className="demo-banner">
     <div className="demo-banner-text">
-      <Icon name="info" size={15} color={C.stone} />
+      <Icon name="info" size={15} color={C.primary} />
       Session only — data won't be saved when you close this tab. Create a free account to keep your work.
     </div>
-    <button className="btn bam bs" onClick={onSignUp}>Create free account</button>
+    <button className="btn bac bs" onClick={onSignUp}>Create free account</button>
   </div>
 );
 
@@ -565,19 +585,19 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
   const grades = gradeActivities(activities);
   const topVols = [...volunteers].sort((a, b) => (b.hours_logged || 0) - (a.hours_logged || 0)).slice(0, 3);
   const pie = [
-    { name: "Education", value: 42, color: C.stone },
-    { name: "Healthcare", value: 28, color: C.sage },
-    { name: "Livelihood", value: 20, color: C.stoneDk },
+    { name: "Education", value: 42, color: C.primary },
+    { name: "Healthcare", value: 28, color: C.accent },
+    { name: "Livelihood", value: 20, color: C.rose },
     { name: "Other", value: 10, color: C.textDim },
   ];
   return (
     <div className="content">
       <div className="sr">
         {[
-          { label: "Total Beneficiaries", value: totB.toLocaleString(), delta: "+18% this month", icon: "users", accent: C.stone },
-          { label: "Volunteers Deployed", value: totV.toString(), delta: "+7 this month", icon: "person", accent: C.sage },
-          { label: "Funds Utilised", value: `₹${(totF / 100000).toFixed(2)}L`, delta: "+24% vs prior month", icon: "bar", accent: C.stoneDk },
-          { label: "Programmes", value: activities.length.toString(), delta: `${activities.filter(a => a.status === "Active").length} active`, icon: "trending", accent: C.stone },
+          { label: "Total Beneficiaries", value: totB.toLocaleString(), delta: "+18% this month", icon: "users", accent: C.primary },
+          { label: "Volunteers Deployed", value: totV.toString(), delta: "+7 this month", icon: "person", accent: C.accent },
+          { label: "Funds Utilised", value: `₹${(totF / 100000).toFixed(2)}L`, delta: "+24% vs prior month", icon: "bar", accent: C.rose },
+          { label: "Programmes", value: activities.length.toString(), delta: `${activities.filter(a => a.status === "Active").length} active`, icon: "trending", accent: C.primary },
         ].map(s => (
           <div key={s.label} className="sc">
             <div className="sa" style={{ background: s.accent }} />
@@ -592,7 +612,7 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
         {[
           { label: "Cost per Beneficiary", value: `₹${costPerBeneficiary.toLocaleString()}`, delta: "Lower is better", color: C.amber },
           { label: "Volunteer Retention", value: `${retentionRate}%`, delta: retentionRate >= 70 ? "Strong" : "Needs attention", color: retentionRate >= 50 ? C.green : C.red },
-          { label: "Programmes Graded", value: activities.length.toString(), delta: "Relative ranking active", color: C.stone },
+          { label: "Programmes Graded", value: activities.length.toString(), delta: "Relative ranking active", color: C.primary },
         ].map(s => (
           <div key={s.label} className="sc">
             <div className="sa" style={{ background: s.color }} />
@@ -607,7 +627,7 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
           <div className="ch">
             <div><div className="ct">Impact Trend</div><div className="cs">Monthly beneficiaries & volunteers</div></div>
             <div style={{ display: "flex", gap: 14 }}>
-              {[{ c: C.stone, l: "Beneficiaries" }, { c: C.sage, l: "Volunteers" }].map(x => (
+              {[{ c: C.primary, l: "Beneficiaries" }, { c: C.accent, l: "Volunteers" }].map(x => (
                 <div key={x.l} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.textMd }}>
                   <div style={{ width: 7, height: 7, borderRadius: "50%", background: x.c }} />{x.l}
                 </div>
@@ -619,20 +639,20 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
               <AreaChart data={MONTHLY_DATA}>
                 <defs>
                   <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.stone} stopOpacity={0.15} />
-                    <stop offset="100%" stopColor={C.stone} stopOpacity={0} />
+                    <stop offset="0%" stopColor={C.primary} stopOpacity={0.15} />
+                    <stop offset="100%" stopColor={C.primary} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={C.sage} stopOpacity={0.12} />
-                    <stop offset="100%" stopColor={C.sage} stopOpacity={0} />
+                    <stop offset="0%" stopColor={C.accent} stopOpacity={0.12} />
+                    <stop offset="100%" stopColor={C.accent} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="2 4" stroke={C.border} vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CT />} />
-                <Area type="monotone" dataKey="beneficiaries" stroke={C.stone} strokeWidth={2} fill="url(#ag)" name="beneficiaries" dot={false} />
-                <Area type="monotone" dataKey="volunteers" stroke={C.sage} strokeWidth={2} fill="url(#gg)" name="volunteers" dot={false} />
+                <Area type="monotone" dataKey="beneficiaries" stroke={C.primary} strokeWidth={2} fill="url(#ag)" name="beneficiaries" dot={false} />
+                <Area type="monotone" dataKey="volunteers" stroke={C.accent} strokeWidth={2} fill="url(#gg)" name="volunteers" dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -652,7 +672,7 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} />
                 <Tooltip content={<CT />} />
-                <Bar dataKey="donations" fill={C.stone} radius={[3, 3, 0, 0]} name="donations" />
+                <Bar dataKey="donations" fill={C.primary} radius={[3, 3, 0, 0]} name="donations" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -672,7 +692,7 @@ const Dashboard = ({ org, activities, volunteers, setPage }) => {
                   <div style={{ fontSize: 11, color: C.textDim }}>{v.role}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "'Geist Mono',monospace", fontSize: 13, color: C.stone, fontWeight: 500 }}>{v.hours_logged}h</div>
+                  <div style={{ fontFamily: "'Geist Mono',monospace", fontSize: 13, color: C.primary, fontWeight: 500 }}>{v.hours_logged}h</div>
                   <div style={{ fontSize: 10, color: C.textDim }}>{v.events_attended} events</div>
                 </div>
               </div>
@@ -815,7 +835,7 @@ const Volunteers = ({ org, volunteers, setVolunteers, showToast, isGuest }) => {
                 <div><div className="vv">{v.events_attended || 0}</div><div className="vl">Events</div></div>
               </div>
               {perf.label === "Needs Engagement" && (
-                <div style={{ marginTop: 10, padding: "8px 10px", background: C.amberDim, borderRadius: 6, fontSize: 11, color: C.stone, border: `1px solid rgba(113,54,0,.15)` }}>
+                <div style={{ marginTop: 10, padding: "8px 10px", background: C.amberDim, borderRadius: 6, fontSize: 11, color: C.amber, border: `1px solid rgba(192,120,48,.2)` }}>
                   Low activity vs peers — consider reaching out to re-engage.
                 </div>
               )}
@@ -879,20 +899,20 @@ const Reports = ({ org, activities, showToast }) => {
   ];
   return (
     <div className="content">
-      <div style={{ background: `linear-gradient(135deg,${C.stoneDk},${C.stone})`, borderRadius: 12, padding: "28px 32px", marginBottom: 18, display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+      <div style={{ background: `linear-gradient(135deg,${C.primaryDk},${C.primary})`, borderRadius: 12, padding: "28px 32px", marginBottom: 18, display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
         <div>
-          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 700, color: C.bg, marginBottom: 4 }}>Impact Report — Q1 2025</div>
-          <div style={{ fontSize: 12, color: "rgba(253,251,212,.65)" }}>{org?.name || "NGO"} · January – March 2025</div>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 26, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Impact Report — Q1 2025</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.65)" }}>{org?.name || "NGO"} · January – March 2025</div>
           <div style={{ display: "flex", gap: 28, marginTop: 18, flexWrap: "wrap" }}>
             {[[totB.toLocaleString(), "Beneficiaries"], ["38", "Volunteers"], [`₹${(totF / 100000).toFixed(2)}L`, "Utilised"], ["82", "Trust Score"]].map(([v, l]) => (
               <div key={l}>
-                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 600, color: C.bg, lineHeight: 1 }}>{v}</div>
-                <div style={{ fontSize: 10, color: "rgba(253,251,212,.55)", textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>{l}</div>
+                <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 30, fontWeight: 600, color: "#fff", lineHeight: 1 }}>{v}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,.55)", textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>{l}</div>
               </div>
             ))}
           </div>
         </div>
-        <button className="btn bs" style={{ background: "rgba(253,251,212,.15)", color: C.bg, border: `1.5px solid rgba(253,251,212,.25)` }} onClick={handlePDF} disabled={pdfLoading}>
+        <button className="btn bs" style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1.5px solid rgba(255,255,255,.25)" }} onClick={handlePDF} disabled={pdfLoading}>
           <Icon name="download" size={13} />{pdfLoading ? "Exporting…" : "Export PDF"}
         </button>
       </div>
@@ -917,7 +937,7 @@ const Reports = ({ org, activities, showToast }) => {
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CT />} />
-                <Line type="monotone" dataKey="beneficiaries" stroke={C.stone} strokeWidth={2} dot={{ fill: C.stone, r: 3, strokeWidth: 0 }} name="beneficiaries" />
+                <Line type="monotone" dataKey="beneficiaries" stroke={C.primary} strokeWidth={2} dot={{ fill: C.primary, r: 3, strokeWidth: 0 }} name="beneficiaries" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -975,10 +995,10 @@ const Analytics = ({ activities }) => {
   const { costPerBeneficiary, retentionRate } = calcMetrics(activities);
   const forecastData = [...MONTHLY_DATA, { month: "Apr*", beneficiaries: pred.beneficiaries, volunteers: pred.volunteers, donations: pred.funds }];
   const insights = [
-    { color: C.stone, text: `Beneficiary reach is projected to grow ${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% next month — on track to exceed ${Math.round(pred.beneficiaries / 100) * 100} people.` },
+    { color: C.primary, text: `Beneficiary reach is projected to grow ${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% next month — on track to exceed ${Math.round(pred.beneficiaries / 100) * 100} people.` },
     { color: pred.bGrowth > 10 ? C.green : C.amber, text: `At ₹${costPerBeneficiary} per beneficiary, cost efficiency is ${costPerBeneficiary < 150 ? "excellent" : costPerBeneficiary < 300 ? "average" : "high"}. ${costPerBeneficiary > 300 ? "Consolidate smaller programmes to reduce overhead." : "Maintain current resource allocation."}` },
     { color: retentionRate >= 70 ? C.green : C.amber, text: `Volunteer retention stands at ${retentionRate}%. ${retentionRate < 70 ? "Recognition programmes and flexible scheduling improve retention significantly." : "Strong. Consider building a volunteer leadership track."}` },
-    { color: C.stoneDk, text: `Fund disbursement is trending ${pred.fGrowth > 0 ? "upward" : "downward"} at ${Math.abs(pred.fGrowth)}% month-over-month. ${pred.fGrowth > 15 ? "Strong donor confidence — a good time to approach institutional funders." : "Focus on retention through quarterly impact reports."}` },
+    { color: C.primaryDk, text: `Fund disbursement is trending ${pred.fGrowth > 0 ? "upward" : "downward"} at ${Math.abs(pred.fGrowth)}% month-over-month. ${pred.fGrowth > 15 ? "Strong donor confidence — a good time to approach institutional funders." : "Focus on retention through quarterly impact reports."}` },
   ];
   return (
     <div className="content">
@@ -988,7 +1008,7 @@ const Analytics = ({ activities }) => {
       </div>
       <div className="crt" style={{ marginBottom: 16 }}>
         {[
-          { label: "Predicted Beneficiaries", value: pred.beneficiaries.toLocaleString(), delta: `${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% vs this month`, color: pred.bGrowth > 0 ? C.stone : C.red },
+          { label: "Predicted Beneficiaries", value: pred.beneficiaries.toLocaleString(), delta: `${pred.bGrowth > 0 ? "+" : ""}${pred.bGrowth}% vs this month`, color: pred.bGrowth > 0 ? C.primary : C.red },
           { label: "Predicted Volunteers", value: pred.volunteers.toString(), delta: `${pred.vGrowth > 0 ? "+" : ""}${pred.vGrowth}% vs this month`, color: pred.vGrowth > 0 ? C.green : C.red },
           { label: "Predicted Fund Need", value: `₹${(pred.funds / 1000).toFixed(0)}k`, delta: `${pred.fGrowth > 0 ? "+" : ""}${pred.fGrowth}% vs this month`, color: C.amber },
         ].map(s => (
@@ -1006,16 +1026,16 @@ const Analytics = ({ activities }) => {
             <AreaChart data={forecastData}>
               <defs>
                 <linearGradient id="fg2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={C.stone} stopOpacity={0.15} />
-                  <stop offset="100%" stopColor={C.stone} stopOpacity={0} />
+                  <stop offset="0%" stopColor={C.primary} stopOpacity={0.15} />
+                  <stop offset="100%" stopColor={C.primary} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="2 4" stroke={C.border} vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: C.textDim }} axisLine={false} tickLine={false} />
               <Tooltip content={<CT />} />
-              <Area type="monotone" dataKey="beneficiaries" stroke={C.stone} strokeWidth={2} fill="url(#fg2)" name="beneficiaries"
-                dot={(props) => { const isLast = props.index === forecastData.length - 1; return <circle key={props.index} cx={props.cx} cy={props.cy} r={isLast ? 5 : 3} fill={isLast ? C.sage : C.stone} strokeWidth={0} />; }}
+              <Area type="monotone" dataKey="beneficiaries" stroke={C.primary} strokeWidth={2} fill="url(#fg2)" name="beneficiaries"
+                dot={(props) => { const isLast = props.index === forecastData.length - 1; return <circle key={props.index} cx={props.cx} cy={props.cy} r={isLast ? 5 : 3} fill={isLast ? C.accent : C.primary} strokeWidth={0} />; }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -1046,17 +1066,17 @@ const About = () => (
     <div className="cre">
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <div className="card">
-          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="about" size={17} color={C.stone} />Our Story</div></div>
+          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="about" size={17} color={C.primary} />Our Story</div></div>
           <div className="cb"><div className="about-body">This platform grew out of a genuine passion at the intersection of two fields — finance and technology. While exploring how financial analysis and computer science can drive better decision-making, one sector kept standing out as underserved: India's NGO community.<br /><br />These organisations work tirelessly in education, healthcare, and livelihoods. Yet many struggle to articulate their impact in the structured, data-driven language that grant committees and corporate donors respond to. A field coordinator running health camps in Dharavi shouldn't need to be a financial analyst to demonstrate that her programme serves 380 people at ₹82 per beneficiary. That story should tell itself. ImpactLens was built to make that happen — automatically, for any NGO, regardless of their technical capacity.</div></div>
         </div>
         <div className="card">
-          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="trending" size={17} color={C.stone} />Finance Meets Social Impact</div></div>
+          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="trending" size={17} color={C.primary} />Finance Meets Social Impact</div></div>
           <div className="cb"><div className="about-body">The most underfunded NGOs are often the most effective — they simply lack the tools to demonstrate that effectiveness in quantifiable terms. ImpactLens applies financial analysis frameworks to social sector data: cost per beneficiary, fund utilisation ratios, volunteer retention rates, programme-level impact scoring.<br /><br />Programmes are graded relative to each other — not against arbitrary benchmarks. Predictive modelling then helps NGOs plan forward, forecasting next month's resource needs so they approach donors proactively, not reactively.</div></div>
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <div className="card">
-          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="shield" size={17} color={C.stone} />How ImpactLens Helps</div></div>
+          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="shield" size={17} color={C.primary} />How ImpactLens Helps</div></div>
           <div className="cb">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               {[
@@ -1066,7 +1086,7 @@ const About = () => (
                 { icon: "users", title: "Volunteer Intelligence", text: "Track performance, surface top contributors, flag those needing re-engagement." },
               ].map(c => (
                 <div key={c.title} className="about-card">
-                  <div className="about-card-icon"><Icon name={c.icon} size={16} color={C.stone} /></div>
+                  <div className="about-card-icon"><Icon name={c.icon} size={16} color={C.primary} /></div>
                   <div className="about-card-title">{c.title}</div>
                   <div className="about-card-text">{c.text}</div>
                 </div>
@@ -1075,7 +1095,7 @@ const About = () => (
           </div>
         </div>
         <div className="card">
-          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="heart" size={17} color={C.stone} />Our Model</div></div>
+          <div className="ch"><div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}><Icon name="heart" size={17} color={C.primary} />Our Model</div></div>
           <div className="cb"><div className="about-body">ImpactLens is free for all NGOs — always. We operate on a pay-what-you-can philosophy because access to good financial tooling should not be a privilege. If ImpactLens helps your organisation secure more funding or deliver more impact, a voluntary contribution keeps the platform running.</div></div>
         </div>
       </div>
@@ -1084,9 +1104,6 @@ const About = () => (
 );
 
 // ─── PAGE: CONTACT ───────────────────────────────────────────────
-// Left col: Contact & Enquiries
-// Right col: Platform Feedback (top) → Direct Contact (bottom)
-// On mobile they stack in DOM order: Contact → Feedback → Direct Contact
 const ContactPage = () => {
   const [contactState, contactSubmit] = useForm("xpqojqze");
   const [feedbackState, feedbackSubmit] = useForm("xpqojqze");
@@ -1097,17 +1114,12 @@ const ContactPage = () => {
         <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Reach out to onboard your NGO, ask questions, or share feedback</div>
       </div>
       <div className="contact-grid">
-        {/* LEFT COLUMN */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div className="card">
             <div className="ch"><div className="ct">Contact & Enquiries</div></div>
             <div className="cb">
               {contactState.succeeded ? (
-                <div className="form-success">
-                  <Icon name="check" size={22} color={C.green} />
-                  <div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Message received</div>
-                  <div style={{ fontSize: 12, marginTop: 4 }}>We'll respond within 24 hours.</div>
-                </div>
+                <div className="form-success"><Icon name="check" size={22} color={C.green} /><div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Message received</div><div style={{ fontSize: 12, marginTop: 4 }}>We'll respond within 24 hours.</div></div>
               ) : (
                 <form onSubmit={contactSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
                   <div className="fd"><label>Your Name</label><input type="text" name="name" placeholder="Organisation or individual name" required /></div>
@@ -1115,28 +1127,6 @@ const ContactPage = () => {
                   <div className="fd"><label>Type of Enquiry</label><select name="enquiry_type"><option>Onboard my NGO</option><option>Partnership opportunity</option><option>Technical support</option><option>General question</option></select></div>
                   <div className="fd"><label>Message</label><textarea name="message" placeholder="Tell us about your NGO or what you need..." required /><ValidationError field="message" prefix="Message" errors={contactState.errors} className="form-error-msg" /></div>
                   <button type="submit" className="btn bp bs" style={{ alignSelf: "flex-start" }} disabled={contactState.submitting}><Icon name="mail" size={13} />{contactState.submitting ? "Sending…" : "Send Message"}</button>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-        {/* RIGHT COLUMN: Feedback first, then Direct Contact */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <div className="card">
-            <div className="ch"><div className="ct">Platform Feedback</div></div>
-            <div className="cb">
-              {feedbackState.succeeded ? (
-                <div className="form-success">
-                  <Icon name="check" size={22} color={C.green} />
-                  <div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Thank you</div>
-                  <div style={{ fontSize: 12, marginTop: 4 }}>Your feedback helps us improve for every NGO.</div>
-                </div>
-              ) : (
-                <form onSubmit={feedbackSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
-                  <div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous" /></div>
-                  <div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div>
-                  <div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required /><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg" /></div>
-                  <button type="submit" className="btn bg bs" style={{ alignSelf: "flex-start" }} disabled={feedbackState.submitting}><Icon name="message" size={13} />{feedbackState.submitting ? "Sending…" : "Submit Feedback"}</button>
                 </form>
               )}
             </div>
@@ -1150,14 +1140,213 @@ const ContactPage = () => {
                 { label: "Built with", val: "React · Supabase · Vercel", icon: "leaf" },
               ].map(item => (
                 <div key={item.label} className="contact-item">
-                  <div style={{ marginTop: 2 }}><Icon name={item.icon} size={15} color={C.stone} /></div>
+                  <div style={{ marginTop: 2 }}><Icon name={item.icon} size={15} color={C.primary} /></div>
                   <div><div className="contact-item-label">{item.label}</div><div className="contact-item-val">{item.val}</div></div>
                 </div>
               ))}
             </div>
           </div>
         </div>
+        <div className="card">
+          <div className="ch"><div className="ct">Platform Feedback</div></div>
+          <div className="cb">
+            {feedbackState.succeeded ? (
+              <div className="form-success"><Icon name="check" size={22} color={C.green} /><div style={{ marginTop: 10, fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>Thank you</div><div style={{ fontSize: 12, marginTop: 4 }}>Your feedback helps us improve for every NGO.</div></div>
+            ) : (
+              <form onSubmit={feedbackSubmit} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
+                <div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous" /></div>
+                <div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div>
+                <div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required /><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg" /></div>
+                <button type="submit" className="btn bg bs" style={{ alignSelf: "flex-start" }} disabled={feedbackState.submitting}><Icon name="message" size={13} />{feedbackState.submitting ? "Sending…" : "Submit Feedback"}</button>
+              </form>
+            )}
+          </div>
+        </div>
       </div>
+    </div>
+  );
+};
+
+// ─── PAGE: LEGAL ─────────────────────────────────────────────────
+const Legal = ({ initialTab = "privacy" }) => {
+  const [tab, setTab] = useState(initialTab);
+  const tabs = [
+    { id: "privacy", label: "Privacy Policy", icon: "lock" },
+    { id: "terms", label: "Terms of Use", icon: "doc" },
+    { id: "data", label: "Data & Compliance", icon: "shield" },
+  ];
+  return (
+    <div className="content">
+      <div style={{ marginBottom: 6 }}>
+        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 600 }}>Legal & Compliance</div>
+        <div style={{ fontSize: 12, color: C.textDim, marginTop: 3 }}>Last updated: April 2025</div>
+      </div>
+      <div className="legal-tabs">
+        {tabs.map(t => (
+          <button key={t.id} className={`legal-tab ${tab === t.id ? "active" : ""}`} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "privacy" && (
+        <div>
+          <div className="legal-highlight">
+            ImpactLens is committed to protecting the privacy of NGOs and their beneficiary data. We collect only what is necessary to provide our services and never sell or share your data with third parties.
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="info" size={16} color={C.primary} />What We Collect</div>
+            <div className="legal-body">
+              <p>When you register an organisation on ImpactLens, we collect:</p>
+              <ul>
+                <li>Your email address and password (stored securely via Supabase Auth — passwords are hashed and never readable)</li>
+                <li>Your organisation's name, city, and type</li>
+                <li>Programme data you log: activity names, dates, volunteer counts, beneficiary counts, and funds utilised</li>
+                <li>Volunteer registry information: names, roles, contact details, and hours</li>
+              </ul>
+              <p>We do not collect payment information, government IDs, or any sensitive personal data about beneficiaries.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="shield" size={16} color={C.primary} />How We Use Your Data</div>
+            <div className="legal-body">
+              <p>Your data is used exclusively to:</p>
+              <ul>
+                <li>Display your organisation's analytics and reports within the platform</li>
+                <li>Generate pre-filled prompts for the AI narrative feature (data is sent directly to Claude.ai in your browser — not stored by ImpactLens)</li>
+                <li>Generate PDF reports for your own use</li>
+              </ul>
+              <p>We do not use your data for advertising, profiling, or any commercial purpose beyond providing the ImpactLens service.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="lock" size={16} color={C.primary} />Data Storage & Security</div>
+            <div className="legal-body">
+              <p>All data is stored in Supabase, a SOC 2 Type II certified database provider, hosted in the South Asia (Mumbai) region. Row-Level Security ensures that each organisation can only access its own data — no cross-organisation data access is possible at the database level.</p>
+              <p>Your login session is maintained using localStorage on your device. No tracking cookies are used. We do not use Google Analytics, Meta Pixel, or any third-party tracking.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="users" size={16} color={C.primary} />Your Rights</div>
+            <div className="legal-body">
+              <p>You have the right to:</p>
+              <ul>
+                <li>Access all data associated with your account</li>
+                <li>Delete your account and all associated data at any time by contacting alisiddiq1804@gmail.com</li>
+                <li>Export your programme data via the PDF export feature</li>
+                <li>Correct any inaccurate data through the platform's edit functions</li>
+              </ul>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="mail" size={16} color={C.primary} />Contact</div>
+            <div className="legal-body">
+              <p>For privacy-related queries, contact us at <strong>alisiddiq1804@gmail.com</strong>. We will respond within 5 business days.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "terms" && (
+        <div>
+          <div className="legal-highlight">
+            By using ImpactLens, you agree to these terms. These terms are designed to be fair, readable, and protect both your organisation and the platform.
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="check" size={16} color={C.primary} />Acceptance of Terms</div>
+            <div className="legal-body">
+              <p>By accessing or using ImpactLens, you confirm that you are authorised to act on behalf of your organisation and agree to these Terms of Use. If you do not agree, please do not use the platform.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="leaf" size={16} color={C.primary} />Permitted Use</div>
+            <div className="legal-body">
+              <p>ImpactLens is provided for NGOs and social sector organisations to log, analyse, and report their impact activities. You agree to:</p>
+              <ul>
+                <li>Use the platform only for lawful purposes</li>
+                <li>Provide accurate information about your programmes and volunteers</li>
+                <li>Not attempt to access another organisation's data</li>
+                <li>Not use automated scripts or bots to abuse the platform</li>
+              </ul>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="file" size={16} color={C.primary} />Your Data Ownership</div>
+            <div className="legal-body">
+              <p>All programme data, volunteer records, and reports you create on ImpactLens remain your property. ImpactLens does not claim ownership over any content you submit. You grant ImpactLens a limited licence to store and display this data to provide you with the service.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="info" size={16} color={C.primary} />Disclaimer of Warranties</div>
+            <div className="legal-body">
+              <p>ImpactLens is provided "as is" without warranties of any kind. While we work to maintain uptime and data integrity, we cannot guarantee uninterrupted access. Analytics and predictions are model-generated and should be used as indicative guidance, not as financial or legal advice.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="trending" size={16} color={C.primary} />Changes to Terms</div>
+            <div className="legal-body">
+              <p>We may update these terms from time to time. Significant changes will be communicated via the platform. Continued use after notification constitutes acceptance of updated terms.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "data" && (
+        <div>
+          <div className="legal-highlight">
+            ImpactLens takes a privacy-first approach to data architecture. This page explains our technical and legal compliance measures in plain language.
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="shield" size={16} color={C.primary} />Security Architecture</div>
+            <div className="legal-body">
+              <ul>
+                <li><strong>Row-Level Security (RLS):</strong> Enforced at database level — each NGO can only query its own records. This cannot be bypassed from the frontend.</li>
+                <li><strong>Authentication:</strong> Handled by Supabase Auth. Passwords are hashed using bcrypt and never stored in plaintext.</li>
+                <li><strong>SQL Injection:</strong> All database queries use Supabase's parameterised query system — raw SQL is never constructed from user input.</li>
+                <li><strong>XSS Protection:</strong> React's rendering engine escapes all user-generated content by default.</li>
+                <li><strong>HTTPS:</strong> All traffic is encrypted in transit via Vercel's TLS termination.</li>
+                <li><strong>CORS:</strong> Supabase API only accepts requests from whitelisted domains. Add your Vercel domain in Supabase → Settings → API → CORS.</li>
+              </ul>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="bar" size={16} color={C.primary} />Database Indexes</div>
+            <div className="legal-body">
+              <p>To ensure fast query performance as your data grows, run these index commands in your Supabase SQL Editor:</p>
+              <div style={{ background: C.raised, borderRadius: 8, padding: "14px 16px", marginTop: 10, fontFamily: "'Geist Mono',monospace", fontSize: 12, color: C.textMd, lineHeight: 1.7 }}>
+                {`create index if not exists idx_activities_org_id on public.activities(org_id);
+create index if not exists idx_volunteers_org_id on public.volunteers(org_id);
+create index if not exists idx_donations_org_id on public.donations(org_id);
+create index if not exists idx_organizations_user_id on public.organizations(user_id);`}
+              </div>
+              <p style={{ marginTop: 10 }}>These indexes mean Postgres can find your NGO's records instantly without scanning all rows — critical once thousands of NGOs are using the platform.</p>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="doc" size={16} color={C.primary} />Regulatory Compliance</div>
+            <div className="legal-body">
+              <ul>
+                <li><strong>India DPDP Act 2023:</strong> We collect minimal personal data, store it securely, and provide deletion on request — consistent with the Digital Personal Data Protection Act.</li>
+                <li><strong>GDPR (applicable to EU users):</strong> Data is stored in Mumbai region. Users have rights to access, correct, and delete their data. No data is transferred outside India except to display your reports in your browser.</li>
+                <li><strong>IT Act 2000:</strong> We maintain reasonable security practices as required under Section 43A of the Information Technology Act.</li>
+                <li><strong>No cookies:</strong> ImpactLens uses localStorage for session management only — no tracking or marketing cookies are set. A cookie consent banner is not required.</li>
+              </ul>
+            </div>
+          </div>
+          <div className="legal-section">
+            <div className="legal-section-title"><Icon name="info" size={16} color={C.primary} />Data Processors</div>
+            <div className="legal-body">
+              <p>ImpactLens uses the following sub-processors:</p>
+              <ul>
+                <li><strong>Supabase Inc.</strong> — Database, authentication, and storage (SOC 2 Type II certified)</li>
+                <li><strong>Vercel Inc.</strong> — Hosting and CDN (SOC 2 Type II certified)</li>
+                <li><strong>Formspree Inc.</strong> — Contact form processing (enquiries and feedback only)</li>
+                <li><strong>Anthropic PBC (Claude.ai)</strong> — AI narrative generation (data is sent directly from your browser to Claude.ai when you click "Open in Claude" — ImpactLens does not relay or store this data)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1190,7 +1379,7 @@ const AuthPage = ({ onAuth, onGuest }) => {
     <div className="aw">
       <div className="ac">
         <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 28 }}>
-          <div className="lm"><Icon name="leaf" size={14} color={C.stone} /></div>
+          <div className="lm"><Icon name="leaf" size={14} color={C.primary} /></div>
           <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 600 }}>ImpactLens</span>
         </div>
         <div className="att">{mode === "login" ? "Welcome back" : "Register your NGO"}</div>
@@ -1207,7 +1396,7 @@ const AuthPage = ({ onAuth, onGuest }) => {
             {loading ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
           </button>
         </div>
-        {isDemo && <div style={{ marginTop: 14, padding: "11px 14px", background: C.amberDim, borderRadius: 7, fontSize: 12, color: C.stone, border: `1px solid rgba(113,54,0,.15)` }}>Demo mode — click Sign In to explore.</div>}
+        {isDemo && <div style={{ marginTop: 14, padding: "11px 14px", background: C.roseDim, borderRadius: 7, fontSize: 12, color: C.primary, border: `1px solid rgba(162,87,79,.15)` }}>Demo mode — click Sign In to explore.</div>}
         <div className="asw">
           {mode === "login" ? <>No account? <span className="aln" onClick={() => setMode("signup")}>Register your NGO</span></> : <>Already registered? <span className="aln" onClick={() => setMode("login")}>Sign in</span></>}
         </div>
@@ -1223,11 +1412,11 @@ const AuthPage = ({ onAuth, onGuest }) => {
 };
 
 // ─── LANDING PAGE ────────────────────────────────────────────────
-const Landing = ({ onEnter, onGuest }) => (
+const Landing = ({ onEnter, onGuest, onLegal }) => (
   <div className="landing">
     <nav className="lnav">
       <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        <div className="lm"><Icon name="leaf" size={14} color={C.stone} /></div>
+        <div className="lm"><Icon name="leaf" size={14} color={C.primary} /></div>
         <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 19, fontWeight: 600, color: C.text }}>ImpactLens</span>
       </div>
       <div style={{ display: "flex", gap: 10 }}>
@@ -1236,7 +1425,7 @@ const Landing = ({ onEnter, onGuest }) => (
       </div>
     </nav>
     <div className="lhero">
-      <div className="ley"><Icon name="shield" size={11} color={C.stone} />Built for Indian NGOs</div>
+      <div className="ley"><Icon name="shield" size={11} color={C.primary} />Built for Indian NGOs</div>
       <div className="ltitle">Turn your impact data into<br /><em>donor trust</em></div>
       <div className="ldesc">Log activities. Track beneficiaries. Generate transparent financial reports — and let AI write the donor narrative for you.</div>
       <div className="lacts">
@@ -1252,7 +1441,7 @@ const Landing = ({ onEnter, onGuest }) => (
         { icon: "bar", title: "Financial Transparency", desc: "Cost per beneficiary, fund utilisation breakdowns, and a transparency score — the numbers that move donors." },
       ].map(f => (
         <div key={f.title} className="fc">
-          <div className="fi"><Icon name={f.icon} size={22} color={C.stone} /></div>
+          <div className="fi"><Icon name={f.icon} size={22} color={C.primary} /></div>
           <div className="ftt">{f.title}</div>
           <div className="fd2">{f.desc}</div>
         </div>
@@ -1260,7 +1449,11 @@ const Landing = ({ onEnter, onGuest }) => (
     </div>
     <div className="lfoot">
       <div className="lft">© 2025 ImpactLens · Built for India's NGO sector</div>
-      <div className="lft">Pay what you can · 80G eligible contributions</div>
+      <div className="lfoot-links">
+        <span className="lfoot-link" onClick={() => onLegal("privacy")}>Privacy Policy</span>
+        <span className="lfoot-link" onClick={() => onLegal("terms")}>Terms of Use</span>
+        <span className="lfoot-link" onClick={() => onLegal("data")}>Data & Compliance</span>
+      </div>
     </div>
   </div>
 );
@@ -1287,6 +1480,7 @@ const NAV = [
   { id: "analytics",  icon: "predict", label: "Analytics" },
   { id: "about",      icon: "about",   label: "About" },
   { id: "contact",    icon: "mail",    label: "Contact" },
+  { id: "legal",      icon: "lock",    label: "Legal" },
 ];
 const PAGE_META = {
   dashboard:  ["Overview",     "Q1 2025"],
@@ -1296,6 +1490,7 @@ const PAGE_META = {
   analytics:  ["Analytics",    "Predictions & insights"],
   about:      ["About",        "Our story & philosophy"],
   contact:    ["Contact",      "Get in touch"],
+  legal:      ["Legal",        "Privacy, Terms & Compliance"],
 };
 const BOTTOM_NAV = [
   { id: "dashboard",  icon: "grid",    label: "Home" },
@@ -1308,6 +1503,7 @@ const MORE_ITEMS = [
   { id: "volunteers", icon: "users",  label: "Volunteers" },
   { id: "about",      icon: "about",  label: "About" },
   { id: "contact",    icon: "mail",   label: "Contact" },
+  { id: "legal",      icon: "lock",   label: "Legal" },
 ];
 
 // ─── ROOT APP ────────────────────────────────────────────────────
@@ -1317,6 +1513,7 @@ export default function App() {
   const [org, setOrg] = useState(null);
   const [isGuest, setIsGuest] = useState(false);
   const [page, setPage] = useState("dashboard");
+  const [legalTab, setLegalTab] = useState("privacy");
   const [activities, setActivities] = useState([]);
   const [volunteers, setVolunteers] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
@@ -1351,12 +1548,29 @@ export default function App() {
     setView("landing"); setPage("dashboard"); setShowSignOut(false);
   };
 
+  const onLegal = (tab) => {
+    setLegalTab(tab);
+    setView("legal");
+  };
+
   const navTo = (id) => { setPage(id); setShowMore(false); };
   const onSaveActivity = rec => setActivities(prev => [rec, ...prev]);
   const [title, sub] = PAGE_META[page] || ["", ""];
 
-  if (view === "landing") return (<><style>{css}</style><Landing onEnter={() => setView("auth")} onGuest={onGuest} /></>);
+  if (view === "landing") return (<><style>{css}</style><Landing onEnter={() => setView("auth")} onGuest={onGuest} onLegal={onLegal} /></>);
   if (view === "auth")    return (<><style>{css}</style><AuthPage onAuth={onAuth} onGuest={onGuest} /></>);
+  if (view === "legal")   return (
+    <>
+      <style>{css}</style>
+      <div style={{ minHeight: "100vh", background: C.bg }}>
+        <div style={{ padding: "16px 32px", borderBottom: `1px solid ${C.border}`, background: C.surface, display: "flex", alignItems: "center", gap: 12 }}>
+          <button className="btn bg bs" onClick={() => setView("landing")}><Icon name="arrow" size={12} color={C.textMd} style={{ transform: "rotate(180deg)" }} />Back</button>
+          <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontWeight: 600 }}>ImpactLens · Legal</div>
+        </div>
+        <Legal initialTab={legalTab} />
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -1364,20 +1578,20 @@ export default function App() {
       <div className="app">
         <aside className="sidebar">
           <div className="sb-logo">
-            <div className="lm"><Icon name="leaf" size={14} color={C.stone} /></div>
+            <div className="lm"><Icon name="leaf" size={14} color={C.primary} /></div>
             <span className="ln">ImpactLens</span>
           </div>
           <nav className="nav">
             <div className="ngl">Main</div>
             {NAV.slice(0, 5).map(n => (
               <button key={n.id} className={`ni ${page === n.id ? "active" : ""}`} onClick={() => navTo(n.id)}>
-                <Icon name={n.icon} size={15} color={page === n.id ? C.stone : C.textDim} />{n.label}
+                <Icon name={n.icon} size={15} color={page === n.id ? C.primary : C.textDim} />{n.label}
               </button>
             ))}
             <div className="ngl" style={{ marginTop: 6 }}>Platform</div>
             {NAV.slice(5).map(n => (
               <button key={n.id} className={`ni ${page === n.id ? "active" : ""}`} onClick={() => navTo(n.id)}>
-                <Icon name={n.icon} size={15} color={page === n.id ? C.stone : C.textDim} />{n.label}
+                <Icon name={n.icon} size={15} color={page === n.id ? C.primary : C.textDim} />{n.label}
               </button>
             ))}
           </nav>
@@ -1418,6 +1632,7 @@ export default function App() {
               {page === "analytics"  && <Analytics activities={activities} />}
               {page === "about"      && <About />}
               {page === "contact"    && <ContactPage />}
+              {page === "legal"      && <Legal initialTab={legalTab} />}
             </>
           )}
         </div>
@@ -1427,7 +1642,7 @@ export default function App() {
             {BOTTOM_NAV.map(n => (
               <button key={n.id} className={`bn-item ${page === n.id || (n.id === "more" && showMore) ? "active" : ""}`}
                 onClick={() => n.id === "more" ? setShowMore(s => !s) : navTo(n.id)}>
-                <Icon name={n.icon} size={20} color={(page === n.id || (n.id === "more" && showMore)) ? C.stone : C.textDim} />
+                <Icon name={n.icon} size={20} color={(page === n.id || (n.id === "more" && showMore)) ? C.primary : C.textDim} />
                 <span>{n.label}</span>
               </button>
             ))}
@@ -1438,7 +1653,7 @@ export default function App() {
           <div className="more-sheet" onClick={e => e.stopPropagation()}>
             {MORE_ITEMS.map(item => (
               <div key={item.id} className={`more-item ${page === item.id ? "active" : ""}`} onClick={() => navTo(item.id)}>
-                <Icon name={item.icon} size={18} color={page === item.id ? C.stone : C.textMd} />{item.label}
+                <Icon name={item.icon} size={18} color={page === item.id ? C.primary : C.textMd} />{item.label}
               </div>
             ))}
           </div>
