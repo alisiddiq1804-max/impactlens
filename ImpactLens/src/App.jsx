@@ -71,6 +71,11 @@ const css = `
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:#FDF8F5;color:#2C1810}
   body{font-family:'Instrument Sans',sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+  /* FIX 3 — Brand text selection color */
+  ::selection{background:rgba(162,87,79,.18);color:#2C1810}
+  ::-moz-selection{background:rgba(162,87,79,.18);color:#2C1810}
+
   .app{display:flex;height:100vh;overflow:hidden}
   .sidebar{width:220px;min-width:220px;background:#fff;border-right:1px solid #EDD9CF;display:flex;flex-direction:column;height:100vh;flex-shrink:0}
   .sb-logo{padding:22px 18px 18px;border-bottom:1px solid #EDD9CF;display:flex;align-items:center;gap:9px}
@@ -130,6 +135,9 @@ const css = `
   .bgo2{background:#FEF3E0;color:#8A5A10}
   .br{background:#FFF0EE;color:#A03030}
   .bst{background:#F5ECF0;color:#A2574F;border:1px solid rgba(162,87,79,.2)}
+
+  /* FIX 1 — iPad: force all grids to single column at 1024px */
+  /* Applied directly here so it overrides everything */
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ff{grid-column:1/-1}
   .fd{display:flex;flex-direction:column;gap:5px}
@@ -232,15 +240,18 @@ const css = `
   .stat-number{font-family:'Cormorant Garamond',serif;font-size:clamp(60px,9vw,96px);font-weight:700;color:#fff;line-height:1;margin-bottom:6px}
   .stat-label{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.5vw,26px);font-weight:500;color:rgba(255,255,255,.85);line-height:1.4;max-width:600px;margin:0 auto 12px}
   .stat-source{font-size:11px;color:rgba(255,255,255,.45);margin:0 auto}
+
+  /* FIX 2 — FAQ: single column, stacked, bug eliminated */
   .faq-wrap{padding:56px 48px;background:#FAF4F0;border-top:1px solid #EDD9CF}
   .faq-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#2C1810;text-align:center;margin-bottom:6px}
   .faq-sub{font-size:14px;color:#7A4A3A;text-align:center;margin-bottom:34px}
-  .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:900px;margin:0 auto}
+  .faq-list{display:flex;flex-direction:column;gap:10px;max-width:720px;margin:0 auto}
   .faq-item{background:#fff;border:1px solid #EDD9CF;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(162,87,79,.05)}
-  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;gap:12px;transition:background .12s}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;gap:12px;transition:background .12s;user-select:none}
   .faq-q:hover{background:#FAF4F0}
   .faq-q-text{font-size:13.5px;font-weight:600;color:#2C1810;line-height:1.4}
-  .faq-a{padding:12px 18px 16px;font-size:13px;color:#7A4A3A;line-height:1.7;border-top:1px solid #EDD9CF}
+  .faq-a{padding:14px 20px 18px;font-size:13px;color:#7A4A3A;line-height:1.75;border-top:1px solid #EDD9CF;background:#FDFAF8}
+
   .landing{min-height:100vh;background:#FDF8F5;display:flex;flex-direction:column}
   .lnav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid #EDD9CF;background:#fff}
   .lhero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 32px 52px}
@@ -283,21 +294,22 @@ const css = `
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:#EDD9CF;border-radius:3px}
 
-  /* ── ABOUT CARDS: fill empty space so all 4 boxes look balanced ── */
-  .about-how-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .about-card-full{display:flex;flex-direction:column;height:100%}
-  .about-card-full .about-card-text{flex:1}
-
+  /* FIX 1 — iPad 1024px: single column for ALL form grids and activity log */
   @media(max-width:1024px){
-    /* Fix iPad: Log Activity form — force single column so date & location never overlap */
-    .log-form-grid{grid-template-columns:1fr !important}
-    .log-form-grid .ff{grid-column:1 !important}
-    .form-grid{grid-template-columns:1fr !important;gap:12px}
-    .form-grid .ff{grid-column:1 !important}
-    input[type="date"]{width:100%;display:block;box-sizing:border-box}
+    .form-grid,
+    .form-grid.log-form-grid{
+      grid-template-columns:1fr !important;
+      gap:12px !important;
+    }
+    .form-grid .ff,
+    .form-grid.log-form-grid .ff{
+      grid-column:1 !important;
+    }
+    input,select,textarea{width:100% !important;display:block !important;box-sizing:border-box !important}
     .founder-card{grid-template-columns:1fr;text-align:center}
     .founder-photo{margin:0 auto}
   }
+
   @media(max-width:768px){
     .app{flex-direction:column}
     .sidebar{display:none}
@@ -327,10 +339,8 @@ const css = `
     .ai-hero-title{font-size:20px}
     .sv{font-size:28px}
     .demo-banner{padding:10px 14px}
-    .faq-grid{grid-template-columns:1fr}
     .faq-wrap{padding:36px 20px}
     .stat-banner{padding:36px 20px}
-    .about-how-grid{grid-template-columns:1fr}
   }
   @media(max-width:480px){
     .sr{grid-template-columns:1fr 1fr}
@@ -443,7 +453,7 @@ const ScoreRing=({score=82})=>{
 
 const DemoBanner=({onSignUp})=>(<div className="demo-banner"><div className="demo-banner-text"><Icon name="info" size={15} color="#A2574F"/>Session only — data won't be saved when you close this tab. Create a free account to keep your work.</div><button className="btn bac bs" onClick={onSignUp}>Create free account</button></div>);
 
-// ── FIX 5: FAQ accordion — only one open at a time, no blank panels ──
+// FIX 2 — FAQ: single column stacked, one-at-a-time toggle, no blank panels
 const FAQ_ITEMS=[
   {q:"What is ImpactLens?",a:"ImpactLens is a free analytics platform built for Indian NGOs. Log programmes, track beneficiaries, measure volunteer performance, and generate donor-ready impact reports — all in one place."},
   {q:"Is it really free?",a:"Yes, completely free for all NGOs. We operate on a pay-what-you-can model. A voluntary contribution keeps the platform running, but there is no obligation whatsoever."},
@@ -452,26 +462,22 @@ const FAQ_ITEMS=[
   {q:"How can you help my organization raise or deploy capital?",a:"ImpactLens generates structured financial reports — cost per beneficiary, fund utilisation ratios, transparency scores — exactly the data that grant committees and CSR donors require. Organisations using ImpactLens can demonstrate impact quantitatively, which significantly strengthens funding applications and capital deployment decisions."},
   {q:"Who is it built for?",a:"Indian NGOs in education, healthcare, and livelihood sectors — especially those seeking grants, CSR funding, or institutional donors who require structured impact data."},
 ];
-
 const FAQSection=()=>{
   const[open,setOpen]=useState(null);
-  const toggle=(i)=>setOpen(prev=>prev===i?null:i);
   return(
     <div className="faq-wrap">
       <div className="faq-title">Frequently asked questions</div>
       <div className="faq-sub">Everything you need to know about ImpactLens</div>
-      <div className="faq-grid">
+      <div className="faq-list">
         {FAQ_ITEMS.map((item,i)=>(
           <div key={i} className="faq-item">
-            <div className="faq-q" onClick={()=>toggle(i)}>
+            <div className="faq-q" onClick={()=>setOpen(open===i?null:i)}>
               <span className="faq-q-text">{item.q}</span>
               <div style={{transform:open===i?"rotate(180deg)":"rotate(0deg)",transition:"transform .2s",flexShrink:0}}>
                 <Icon name="chevron" size={16} color="#BF7587"/>
               </div>
             </div>
-            {open===i&&(
-              <div className="faq-a">{item.a}</div>
-            )}
+            {open===i&&<div className="faq-a">{item.a}</div>}
           </div>
         ))}
       </div>
@@ -506,7 +512,6 @@ const Dashboard=({org,activities,volunteers,setPage})=>{
   </div>);
 };
 
-// ── FIX 3: Log Activity — uses log-form-grid class so iPad forces single column ──
 const LogActivity=({org,onSave,setPage,showToast,isGuest})=>{
   const[form,setFormState]=useState({name:"",type:"Education",activity_date:"",volunteers:"",beneficiaries:"",funds_utilized:"",location:"",description:"",status:"Active"});
   const[loading,setLoading]=useState(false);
@@ -520,7 +525,7 @@ const LogActivity=({org,onSave,setPage,showToast,isGuest})=>{
   };
   return(<div className="content"><div style={{maxWidth:700,margin:"0 auto"}}>
     <div style={{marginBottom:22}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600}}>Log Programme</div><div style={{fontSize:13,color:"#BF7587",marginTop:4}}>Record a field activity, camp, or training event</div></div>
-    <div className="card"><div className="cb"><div className="form-grid log-form-grid">
+    <div className="card"><div className="cb"><div className="form-grid">
       <div className="fd ff"><label>Programme Name</label><input placeholder="e.g. Digital Literacy Drive — Kurla" value={form.name} onChange={e=>set("name",e.target.value)}/></div>
       <div className="fd"><label>Type</label><select value={form.type} onChange={e=>set("type",e.target.value)}>{["Education","Healthcare","Livelihood","Environment","Other"].map(t=><option key={t}>{t}</option>)}</select></div>
       <div className="fd"><label>Status</label><select value={form.status} onChange={e=>set("status",e.target.value)}><option>Active</option><option>Completed</option><option>Planned</option></select></div>
@@ -605,7 +610,7 @@ const Analytics=({activities})=>{
   </div>);
 };
 
-// ── FIX 6 + 8: About page — founder photo, natural writing, no stiff pill, Our Model moved to bottom ──
+// FIX 4 — About: two equal-height columns, both starting at same top level
 const About=()=>(
   <div className="content">
     <div className="about-hero">
@@ -614,7 +619,16 @@ const About=()=>(
     </div>
 
     <div className="founder-card">
-      <img src="/images/founder.jpeg" alt="Founder" className="founder-photo" onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="flex";}} />
+      <img
+        src="/images/founder.jpeg"
+        alt="Founder"
+        className="founder-photo"
+        onError={e=>{
+          e.target.style.display="none";
+          const fallback=e.target.nextSibling;
+          if(fallback)fallback.style.display="flex";
+        }}
+      />
       <div style={{width:80,height:80,borderRadius:"50%",background:"linear-gradient(135deg,#A2574F,#E68057)",display:"none",alignItems:"center",justifyContent:"center",fontFamily:"'Cormorant Garamond',serif",fontSize:32,fontWeight:600,color:"#fff",flexShrink:0}}>A</div>
       <div>
         <div className="founder-name">Aly Siddiq</div>
@@ -625,31 +639,41 @@ const About=()=>(
       </div>
     </div>
 
-    <div className="cre" style={{marginBottom:16}}>
-      <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        <div className="card">
-          <div className="ch"><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}><Icon name="about" size={17} color="#A2574F"/>Our Story</div></div>
-          <div className="cb">
-            <div className="about-body">
-              The most underfunded NGOs are often the most effective — they simply lack the tools to demonstrate that effectiveness in quantifiable terms. ImpactLens applies financial analysis frameworks to social sector data: cost per beneficiary, fund utilisation ratios, volunteer retention rates, programme-level impact scoring.
-              <br/><br/>
-              Programmes are graded relative to each other — not against arbitrary benchmarks. Predictive modelling helps NGOs plan forward, forecasting next month's resource needs so they approach donors proactively rather than reactively.
-            </div>
+    {/* Two columns aligned at same top — equal height via align-items:stretch */}
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14,alignItems:"start"}}>
+
+      {/* LEFT: Our Story */}
+      <div className="card" style={{height:"100%"}}>
+        <div className="ch">
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}>
+            <Icon name="about" size={17} color="#A2574F"/>Our Story
+          </div>
+        </div>
+        <div className="cb">
+          <div className="about-body">
+            The most underfunded NGOs are often the most effective — they simply lack the tools to demonstrate that effectiveness in quantifiable terms. ImpactLens applies financial analysis frameworks to social sector data: cost per beneficiary, fund utilisation ratios, volunteer retention rates, programme-level impact scoring.
+            <br/><br/>
+            Programmes are graded relative to each other — not against arbitrary benchmarks. Predictive modelling helps NGOs plan forward, forecasting next month's resource needs so they approach donors proactively rather than reactively.
           </div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="ch"><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}><Icon name="shield" size={17} color="#A2574F"/>How ImpactLens Helps</div></div>
+      {/* RIGHT: How ImpactLens Helps — 2x2 grid of equal cards */}
+      <div className="card" style={{height:"100%"}}>
+        <div className="ch">
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}>
+            <Icon name="shield" size={17} color="#A2574F"/>How ImpactLens Helps
+          </div>
+        </div>
         <div className="cb">
-          <div className="about-how-grid">
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
             {[
-              {icon:"bar",title:"Financial Transparency",text:"Auto-generate fund utilisation reports showing donors exactly where every rupee went — the single most important factor in building long-term donor trust."},
-              {icon:"predict",title:"Forward Planning",text:"Predictive models forecast next month's resource needs based on historical trends, so NGOs plan programmes proactively and approach funders with data, not estimates."},
-              {icon:"sparkle",title:"AI Donor Reports",text:"Claude reads your programme data and writes a compelling donor narrative in seconds. Professional-grade impact storytelling, without the hours."},
-              {icon:"users",title:"Volunteer Intelligence",text:"Track performance across your team, surface your top contributors, and flag volunteers who may need re-engagement — before they disengage entirely."},
+              {icon:"bar",title:"Financial Transparency",text:"Fund utilisation reports showing donors exactly where every rupee went."},
+              {icon:"predict",title:"Forward Planning",text:"Predictive models forecast next month's resource needs from historical trends, so NGOs plan programmes proactively and approach funders with data, not estimates."},
+              {icon:"sparkle",title:"AI Donor Reports",text:"Claude reads your data and writes compelling donor narratives in seconds. Professional-grade impact storytelling, without the hours."},
+              {icon:"users",title:"Volunteer Intelligence",text:"Track performance across your team, surface top contributors, and flag those needing re-engagement before they disengage entirely."},
             ].map(c=>(
-              <div key={c.title} className="about-card about-card-full">
+              <div key={c.title} className="about-card">
                 <div className="about-card-icon"><Icon name={c.icon} size={16} color="#A2574F"/></div>
                 <div className="about-card-title">{c.title}</div>
                 <div className="about-card-text">{c.text}</div>
@@ -660,8 +684,13 @@ const About=()=>(
       </div>
     </div>
 
+    {/* Our Model — full width at bottom */}
     <div className="card">
-      <div className="ch"><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}><Icon name="heart" size={17} color="#A2574F"/>Our Model</div></div>
+      <div className="ch">
+        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontWeight:600,display:"flex",alignItems:"center",gap:8}}>
+          <Icon name="heart" size={17} color="#A2574F"/>Our Model
+        </div>
+      </div>
       <div className="cb">
         <div className="about-body">
           ImpactLens is free for all NGOs — always. We operate on a pay-what-you-can philosophy because access to good financial tooling should not be a privilege. If ImpactLens helps your organisation secure more funding or deliver more impact, a voluntary contribution keeps the platform running. Nothing more, nothing less.
@@ -671,59 +700,19 @@ const About=()=>(
   </div>
 );
 
-// ── FIX 4: Contact — Platform Feedback on left, Direct Contact below Contact form on right ──
 const ContactPage=()=>{
   const[contactState,contactSubmit]=useForm("xpqojqze");
   const[feedbackState,feedbackSubmit]=useForm("xpqojqze");
   return(<div className="content">
     <div style={{marginBottom:20}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600}}>Get in Touch</div><div style={{fontSize:12,color:"#BF7587",marginTop:3}}>Reach out to onboard your NGO, ask questions, or share feedback</div></div>
     <div className="contact-grid">
-      {/* LEFT: Platform Feedback */}
       <div className="card">
         <div className="ch"><div className="ct">Platform Feedback</div></div>
-        <div className="cb">
-          {feedbackState.succeeded?(
-            <div className="form-success"><Icon name="check" size={22} color="#5A7A4A"/><div style={{marginTop:10,fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600}}>Thank you</div><div style={{fontSize:12,marginTop:4}}>Your feedback helps us improve for every NGO.</div></div>
-          ):(
-            <form onSubmit={feedbackSubmit} style={{display:"flex",flexDirection:"column",gap:13}}>
-              <div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous"/></div>
-              <div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div>
-              <div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required/><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg"/></div>
-              <button type="submit" className="btn bg bs" style={{alignSelf:"flex-start"}} disabled={feedbackState.submitting}><Icon name="message" size={13}/>{feedbackState.submitting?"Sending…":"Submit Feedback"}</button>
-            </form>
-          )}
-        </div>
+        <div className="cb">{feedbackState.succeeded?(<div className="form-success"><Icon name="check" size={22} color="#5A7A4A"/><div style={{marginTop:10,fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600}}>Thank you</div><div style={{fontSize:12,marginTop:4}}>Your feedback helps us improve for every NGO.</div></div>):(<form onSubmit={feedbackSubmit} style={{display:"flex",flexDirection:"column",gap:13}}><div className="fd"><label>Email (optional)</label><input type="email" name="email" placeholder="Leave blank to stay anonymous"/></div><div className="fd"><label>How would you rate ImpactLens?</label><select name="rating"><option>Excellent — exactly what NGOs need</option><option>Good — a few things could improve</option><option>Average — needs significant work</option><option>Poor — not useful yet</option></select></div><div className="fd"><label>What would make ImpactLens more useful?</label><textarea name="feedback" placeholder="Features, improvements, or anything on your mind..." required/><ValidationError field="feedback" prefix="Feedback" errors={feedbackState.errors} className="form-error-msg"/></div><button type="submit" className="btn bg bs" style={{alignSelf:"flex-start"}} disabled={feedbackState.submitting}><Icon name="message" size={13}/>{feedbackState.submitting?"Sending…":"Submit Feedback"}</button></form>)}</div>
       </div>
-
-      {/* RIGHT: Contact & Enquiries + Direct Contact below */}
       <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        <div className="card">
-          <div className="ch"><div className="ct">Contact & Enquiries</div></div>
-          <div className="cb">
-            {contactState.succeeded?(
-              <div className="form-success"><Icon name="check" size={22} color="#5A7A4A"/><div style={{marginTop:10,fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600}}>Message received</div><div style={{fontSize:12,marginTop:4}}>We'll respond within 24 hours.</div></div>
-            ):(
-              <form onSubmit={contactSubmit} style={{display:"flex",flexDirection:"column",gap:13}}>
-                <div className="fd"><label>Your Name</label><input type="text" name="name" placeholder="Organisation or individual name" required/></div>
-                <div className="fd"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required/><ValidationError field="email" prefix="Email" errors={contactState.errors} className="form-error-msg"/></div>
-                <div className="fd"><label>Type of Enquiry</label><select name="enquiry_type"><option>Onboard my NGO</option><option>Partnership opportunity</option><option>Technical support</option><option>General question</option></select></div>
-                <div className="fd"><label>Message</label><textarea name="message" placeholder="Tell us about your NGO or what you need..." required/><ValidationError field="message" prefix="Message" errors={contactState.errors} className="form-error-msg"/></div>
-                <button type="submit" className="btn bp bs" style={{alignSelf:"flex-start"}} disabled={contactState.submitting}><Icon name="mail" size={13}/>{contactState.submitting?"Sending…":"Send Message"}</button>
-              </form>
-            )}
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="ch"><div className="ct">Direct Contact</div></div>
-          <div className="cb" style={{padding:"12px 20px"}}>
-            {[
-              {label:"Platform Enquiries",val:"alisiddiq1804@gmail.com",icon:"mail"},
-              {label:"For NGOs",val:"Register via the form — we respond within 24 hours",icon:"users"},
-              {label:"Built with",val:"React · Supabase · Vercel",icon:"leaf"},
-            ].map(item=>(<div key={item.label} className="contact-item"><div style={{marginTop:2}}><Icon name={item.icon} size={15} color="#A2574F"/></div><div><div className="contact-item-label">{item.label}</div><div className="contact-item-val">{item.val}</div></div></div>))}
-          </div>
-        </div>
+        <div className="card"><div className="ch"><div className="ct">Contact & Enquiries</div></div><div className="cb">{contactState.succeeded?(<div className="form-success"><Icon name="check" size={22} color="#5A7A4A"/><div style={{marginTop:10,fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600}}>Message received</div><div style={{fontSize:12,marginTop:4}}>We'll respond within 24 hours.</div></div>):(<form onSubmit={contactSubmit} style={{display:"flex",flexDirection:"column",gap:13}}><div className="fd"><label>Your Name</label><input type="text" name="name" placeholder="Organisation or individual name" required/></div><div className="fd"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required/><ValidationError field="email" prefix="Email" errors={contactState.errors} className="form-error-msg"/></div><div className="fd"><label>Type of Enquiry</label><select name="enquiry_type"><option>Onboard my NGO</option><option>Partnership opportunity</option><option>Technical support</option><option>General question</option></select></div><div className="fd"><label>Message</label><textarea name="message" placeholder="Tell us about your NGO or what you need..." required/><ValidationError field="message" prefix="Message" errors={contactState.errors} className="form-error-msg"/></div><button type="submit" className="btn bp bs" style={{alignSelf:"flex-start"}} disabled={contactState.submitting}><Icon name="mail" size={13}/>{contactState.submitting?"Sending…":"Send Message"}</button></form>)}</div></div>
+        <div className="card"><div className="ch"><div className="ct">Direct Contact</div></div><div className="cb" style={{padding:"12px 20px"}}>{[{label:"Platform Enquiries",val:"alisiddiq1804@gmail.com",icon:"mail"},{label:"For NGOs",val:"Register via the form — we respond within 24 hours",icon:"users"},{label:"Built with",val:"React · Supabase · Vercel",icon:"leaf"}].map(item=>(<div key={item.label} className="contact-item"><div style={{marginTop:2}}><Icon name={item.icon} size={15} color="#A2574F"/></div><div><div className="contact-item-label">{item.label}</div><div className="contact-item-val">{item.val}</div></div></div>))}</div></div>
       </div>
     </div>
   </div>);
@@ -734,27 +723,9 @@ const Legal=({initialTab="privacy"})=>{
   return(<div className="content">
     <div style={{marginBottom:6}}><div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600}}>Legal & Compliance</div><div style={{fontSize:12,color:"#BF7587",marginTop:3}}>Effective January 2026 · © 2026 ImpactLens · All rights reserved</div></div>
     <div className="legal-tabs">{[{id:"privacy",label:"Privacy Policy"},{id:"terms",label:"Terms of Use"},{id:"data",label:"Data & Compliance"}].map(t=>(<button key={t.id} className={`legal-tab ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>{t.label}</button>))}</div>
-    {tab==="privacy"&&(<div>
-      <div className="legal-highlight">ImpactLens is committed to protecting the privacy of NGOs and their data. We collect only what is necessary and never sell or share your data with third parties.</div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>What We Collect</div><div className="legal-body"><p>When you register on ImpactLens, we collect your email address and password (hashed, never readable), your organisation's name, city, and type, programme data you log, and volunteer registry information. We do not collect payment information, government IDs, or sensitive personal data about beneficiaries. No cookies are used. Your session is maintained via localStorage — a strictly necessary functional token that does not require consent under GDPR or India's DPDP Act.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="shield" size={16} color="#A2574F"/>How We Use Your Data</div><div className="legal-body"><p>Your data is used exclusively to display your analytics and generate reports. We do not use your data for advertising or profiling. When you use "Open in Claude", your data is sent directly from your browser to Claude.ai — ImpactLens does not relay or store this.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="lock" size={16} color="#A2574F"/>Storage & Security</div><div className="legal-body"><p>All data is stored in Supabase (SOC 2 Type II certified, South Asia / Mumbai region). Row-Level Security ensures each organisation can only access its own data. All traffic is encrypted via HTTPS. No tracking or marketing cookies are set.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="users" size={16} color="#A2574F"/>Your Rights</div><div className="legal-body"><ul><li>Access all data associated with your account</li><li>Delete your account and all data by emailing alisiddiq1804@gmail.com</li><li>Export your programme data via PDF export</li><li>Correct any inaccurate data through the platform's edit functions</li></ul></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="mail" size={16} color="#A2574F"/>Contact</div><div className="legal-body"><p>For privacy queries, contact <strong>alisiddiq1804@gmail.com</strong>. We respond within 5 business days.</p></div></div>
-    </div>)}
-    {tab==="terms"&&(<div>
-      <div className="legal-highlight">By using ImpactLens, you agree to these terms. They are designed to be fair, readable, and to protect both your organisation and the platform.</div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="check" size={16} color="#A2574F"/>Acceptance</div><div className="legal-body"><p>By accessing ImpactLens, you confirm you are authorised to act on behalf of your organisation and agree to these terms.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="leaf" size={16} color="#A2574F"/>Permitted Use</div><div className="legal-body"><p>ImpactLens is for NGOs and social sector organisations to log, analyse, and report impact. You agree to use the platform only for lawful purposes, provide accurate information, not attempt to access another organisation's data, and not use automated scripts to abuse the platform.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="file" size={16} color="#A2574F"/>Your Data Ownership</div><div className="legal-body"><p>All programme data, volunteer records, and reports you create remain your property. ImpactLens does not claim ownership. You grant ImpactLens a limited licence to store and display this data to provide the service.</p></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>Disclaimer</div><div className="legal-body"><p>ImpactLens is provided "as is". Analytics and predictions are model-generated and should be used as indicative guidance only — not as financial or legal advice.</p></div></div>
-    </div>)}
-    {tab==="data"&&(<div>
-      <div className="legal-highlight">ImpactLens takes a privacy-first approach to data architecture. This page explains our technical and legal compliance measures.</div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="shield" size={16} color="#A2574F"/>Security Architecture</div><div className="legal-body"><ul><li><strong>Row-Level Security (RLS):</strong> Enforced at database level — each NGO can only query its own records.</li><li><strong>Authentication:</strong> Supabase Auth with bcrypt password hashing.</li><li><strong>SQL Injection:</strong> All queries use Supabase's parameterised system.</li><li><strong>XSS Protection:</strong> React escapes all user-generated content by default.</li><li><strong>HTTPS:</strong> All traffic encrypted via Vercel's TLS.</li><li><strong>CORS:</strong> Supabase API only accepts requests from whitelisted domains.</li><li><strong>No cookies:</strong> Session management uses localStorage only — no tracking cookies.</li></ul></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="doc" size={16} color="#A2574F"/>Regulatory Compliance</div><div className="legal-body"><ul><li><strong>India DPDP Act 2026:</strong> Minimal data collection, secure storage, deletion on request.</li><li><strong>GDPR:</strong> Data stored in Mumbai region. Users have rights to access, correct, and delete data.</li><li><strong>IT Act 2000:</strong> Reasonable security practices maintained as required under Section 43A.</li></ul></div></div>
-      <div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>Data Processors</div><div className="legal-body"><ul><li><strong>Supabase Inc.</strong> — Database, auth, storage (SOC 2 Type II)</li><li><strong>Vercel Inc.</strong> — Hosting and CDN (SOC 2 Type II)</li><li><strong>Formspree Inc.</strong> — Contact form processing</li><li><strong>Anthropic PBC (Claude.ai)</strong> — AI narratives sent directly from your browser. ImpactLens does not relay or store this data.</li></ul></div></div>
-    </div>)}
+    {tab==="privacy"&&(<div><div className="legal-highlight">ImpactLens is committed to protecting the privacy of NGOs and their data. We collect only what is necessary and never sell or share your data with third parties.</div><div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>What We Collect</div><div className="legal-body"><p>When you register on ImpactLens, we collect your email address and password (hashed, never readable), your organisation's name, city, and type, programme data you log, and volunteer registry information. We do not collect payment information, government IDs, or sensitive personal data about beneficiaries. No cookies are used.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="shield" size={16} color="#A2574F"/>How We Use Your Data</div><div className="legal-body"><p>Your data is used exclusively to display your analytics and generate reports. We do not use your data for advertising or profiling. When you use "Open in Claude", your data is sent directly from your browser to Claude.ai — ImpactLens does not relay or store this.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="lock" size={16} color="#A2574F"/>Storage & Security</div><div className="legal-body"><p>All data is stored in Supabase (SOC 2 Type II certified, South Asia / Mumbai region). Row-Level Security ensures each organisation can only access its own data. All traffic is encrypted via HTTPS.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="users" size={16} color="#A2574F"/>Your Rights</div><div className="legal-body"><ul><li>Access all data associated with your account</li><li>Delete your account and all data by emailing alisiddiq1804@gmail.com</li><li>Export your programme data via PDF export</li><li>Correct any inaccurate data through the platform's edit functions</li></ul></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="mail" size={16} color="#A2574F"/>Contact</div><div className="legal-body"><p>For privacy queries, contact <strong>alisiddiq1804@gmail.com</strong>. We respond within 5 business days.</p></div></div></div>)}
+    {tab==="terms"&&(<div><div className="legal-highlight">By using ImpactLens, you agree to these terms. They are designed to be fair, readable, and to protect both your organisation and the platform.</div><div className="legal-section"><div className="legal-section-title"><Icon name="check" size={16} color="#A2574F"/>Acceptance</div><div className="legal-body"><p>By accessing ImpactLens, you confirm you are authorised to act on behalf of your organisation and agree to these terms.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="leaf" size={16} color="#A2574F"/>Permitted Use</div><div className="legal-body"><p>ImpactLens is for NGOs and social sector organisations. You agree to use the platform only for lawful purposes, provide accurate information, not attempt to access another organisation's data, and not use automated scripts to abuse the platform.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="file" size={16} color="#A2574F"/>Your Data Ownership</div><div className="legal-body"><p>All programme data, volunteer records, and reports you create remain your property. ImpactLens does not claim ownership.</p></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>Disclaimer</div><div className="legal-body"><p>ImpactLens is provided "as is". Analytics and predictions are model-generated and should be used as indicative guidance only — not as financial or legal advice.</p></div></div></div>)}
+    {tab==="data"&&(<div><div className="legal-highlight">ImpactLens takes a privacy-first approach to data architecture.</div><div className="legal-section"><div className="legal-section-title"><Icon name="shield" size={16} color="#A2574F"/>Security Architecture</div><div className="legal-body"><ul><li><strong>Row-Level Security (RLS):</strong> Enforced at database level.</li><li><strong>Authentication:</strong> Supabase Auth with bcrypt password hashing.</li><li><strong>HTTPS:</strong> All traffic encrypted via Vercel's TLS.</li><li><strong>No cookies:</strong> Session management uses localStorage only.</li></ul></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="doc" size={16} color="#A2574F"/>Regulatory Compliance</div><div className="legal-body"><ul><li><strong>India DPDP Act 2026:</strong> Minimal data collection, secure storage, deletion on request.</li><li><strong>GDPR:</strong> Data stored in Mumbai region. Users have rights to access, correct, and delete.</li><li><strong>IT Act 2000:</strong> Reasonable security practices maintained under Section 43A.</li></ul></div></div><div className="legal-section"><div className="legal-section-title"><Icon name="info" size={16} color="#A2574F"/>Data Processors</div><div className="legal-body"><ul><li><strong>Supabase Inc.</strong> — Database, auth, storage (SOC 2 Type II)</li><li><strong>Vercel Inc.</strong> — Hosting and CDN (SOC 2 Type II)</li><li><strong>Formspree Inc.</strong> — Contact form processing</li><li><strong>Anthropic PBC (Claude.ai)</strong> — AI narratives sent directly from your browser.</li></ul></div></div></div>)}
   </div>);
 };
 
@@ -787,7 +758,6 @@ const AuthPage=({onAuth,onGuest})=>{
   </div></div>);
 };
 
-// ── FIX 2: Landing footer — removed "Aly Siddiq" ──
 const Landing=({onEnter,onGuest,onLegal})=>(<div className="landing">
   <nav className="lnav"><div style={{display:"flex",alignItems:"center",gap:9}}><div className="lm"><Icon name="leaf" size={14} color="#A2574F"/></div><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:19,fontWeight:600,color:"#2C1810"}}>ImpactLens</span></div><div style={{display:"flex",gap:10}}><button className="btn bg bs" onClick={onEnter}>Sign in</button><button className="btn bp bs" onClick={onEnter}>Get started free</button></div></nav>
   <div className="lhero">
