@@ -11,6 +11,15 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const isDemo = SUPABASE_URL.includes("YOUR_PROJECT");
 
+// ── Temp mail domain blocklist ───────────────────────────────────
+const TEMP_DOMAINS = ["mailinator.com","guerrillamail.com","tempmail.com","10minutemail.com","throwam.com","yopmail.com","trashmail.com","fakeinbox.com","sharklasers.com","guerrillamailblock.com","grr.la","guerrillamail.info","guerrillamail.biz","guerrillamail.de","guerrillamail.net","guerrillamail.org","spam4.me","trashmail.at","trashmail.io","trashmail.me","trashmail.net","trashmail.org","dispostable.com","mailnull.com","spamgourmet.com","spamgourmet.net","spamgourmet.org","maildrop.cc","discard.email","spamfree24.org","mailzilla.com","mailzilla.org","getairmail.com","filzmail.com","zzrgg.com","sogetthis.com","spamherelots.com","spamhereplease.com","spamoff.de","tempr.email","spamgob.com","0-mail.com","0815.ru","0clickemail.com","0wnd.net","0wnd.org","10mail.com","10minutemail.net","10minutemail.org","20minutemail.com","20minutemail.it","2prong.com","33mail.com","3d-painting.com","4warding.com","4warding.net","4warding.org","5minutemail.net","6paq.com","9ox.net","abcmail.email","anonaddy.com","anonymbox.com","antispam24.de","armyspy.com","asdasd.nl","baxomale.hk.to","beefmilk.com","bigstring.com","binkmail.com","bio-muesli.info","bobmail.info","bodhi.lawlita.com","bofthew.com","bossmail.de","boun.cr","bouncr.com","breakthru.com","brefmail.com","brennendesreich.de","broadbandninja.com","bumpymail.com","byom.de","c2.hu","card.zp.ua","casualdx.com","cek.pm","centermail.com","centermail.net","chammy.info","childsavetrust.org","chogmail.com","choicemail1.com","clixser.com","cmail.net","cmail.org","coldemail.info","cool.fr.nf","courriel.fr.nf","courrieltemporaire.com","crapmail.org","crazymailing.com","cubiclink.com","curryworld.de","cust.in","dacoolest.com","dandikmail.com","dayrep.com","dcemail.com","deadaddress.com","deadletter.ga","deagot.com","dealja.com","despam.it","despammed.com","devnullmail.com","dfgh.net","digitalsanctuary.com","dingbone.com","discard.ga","discard.gq","discard.ml","discardmail.com","discardmail.de","disposableaddress.com","disposableemailaddresses.emailmiser.com","disposableinbox.com","dispose.it","dispostable.com","dodgeit.com","dodgit.com","dodgit.org","donemail.ru","dontreg.com","dontsendmespam.de","drdrb.com","drdrb.net","dump-email.info","dumpandfuck.com","dumpmail.de","dumpyemail.com","e4ward.com","email60.com","emailage.cf","emailage.ga","emailage.gq","emailage.ml","emailage.tk","emailias.com","emailigo.com","emailinfive.com","emailisvalid.com","emailmiser.com","emailproxsy.com","emailresort.com","emailsensei.com","emailtemporanea.com","emailtemporanea.net","emailtemporar.ro","emailtemporary.com","emailto.de","emailwarden.com","emailx.at.hm","emailxfer.com","emkei.cz","emkei.ga","emkei.gq","emkei.ml","emkei.tk","emz.net","enterto.com","ephemail.net","etranquil.com","etranquil.net","etranquil.org","explodemail.com","express.net.ua","extrachat.ru","extremail.ru","eyepaste.com","facebook-email.cf","facebook-email.ga","facebook-email.ml","facebookmail.gq","facebookmail.ml","fakeinbox.cf","fakeinbox.com","fakeinbox.ga","fakeinbox.info","fakeinbox.ml","fakeinbox.tk","fakemail.fr","fakemailgenerator.com","fakemailz.com","fastacura.com","fastchevy.com","fastchrysler.com","fastkawasaki.com","fastmazda.com","fastmitsubishi.com","fastnissan.com","fastsubaru.com","fastsuzuki.com","fasttoyota.com","fastyamaha.com","fightallspam.com","fiifke.de","filzmail.com","fivemail.de","fizmail.com","fleckens.hu","flurred.com","flyspam.com","footard.com","forgetmail.com","fr33mail.info","frappant.com","free-email.cf","free-email.ga","freeblackbootytube.com","freehosting.nl","freeinbox.cyou","freeletter.me","freemail.ms","freemails.ga","freeplumper.com","freeroid.com","freundin.ru","front14.org","ftpinc.ca","fuckedupload.com","fuirio.com","fullangle.org","fux0ringduh.com","fyii.de","garliclife.com","get1mail.com","get2mail.fr","getairmail.cf","getairmail.com","getairmail.ga","getairmail.gq","getmails.eu","getonemail.com","getonemail.net","giantmail.de","girlsundertheinfluence.com","gishpuppy.com","gmial.com","goemailgo.com","gotmail.com","gotmail.net","gotmail.org","gowikibooks.com","gowikicampus.com","gowikicars.com","gowikifilms.com","gowikigames.com","gowikimusic.com","gowikinetwork.com","gowikitravel.com","gowikitv.com","grandmasmail.com","great-host.in","greensloth.com","grr.la","gsrv.co.uk","gustr.com","h.mintemail.com","h8s.org","habitue.net","hailmail.net","hat-geld.de","hatespam.org","herp.in","hidemail.de","hidzz.com","hmamail.com","hopemail.biz","hostcelo.eu","hotpop.com","hulapla.de","humanoid.net","humn.ws.gy","hurify1.com","ieatspam.eu","ieatspam.info","ieh-mail.de","ignoremail.com","ihateyoualot.info","iheartspam.org","imails.info","inbax.tk","inbox.si","inboxalias.com","inboxclean.com","inboxclean.org","inboxproxy.com","incognitomail.com","incognitomail.net","incognitomail.org","inoutmail.de","inoutmail.eu","inoutmail.info","inoutmail.net","internet-e-mail.de","internet-mail.org","internetemails.net","internetmailing.net","invert.us","ipoo.org","irish2me.com","it2-mail.tk","jetable.com","jetable.fr.nf","jetable.net","jetable.org","jnxjn.com","jourrapide.com","jsrsolutions.com","jumjum.com","junk.to","junkmail.com","junkmail.ga","junkmail.gq","jupimail.com","kasmail.com","kaspop.com","keepmymail.com","killmail.com","killmail.net","kir.ch.tc","klassmaster.com","klzlk.com","koszmail.pl","kurzepost.de","lawlita.com","lazyinbox.com","letthemeatspam.com","lhsdv.com","limail.de","lol.ovpn.to","lolfreak.net","lookugly.com","lortemail.dk","lr78.com","lroid.com","lukop.dk","m21.cc","mail-filter.com","mail-temporaire.fr","mail.by","mail.mezimages.net","mail.zp.ua","mail1a.de","mail21.cc","mail2rss.org","mail333.com","mailbidon.com","mailbiz.biz","mailblocks.com","mailbucket.org","mailcat.biz","mailcatch.com","mailcher.com","mailchop.com","mailcorrupt.com","maildrop.cc","maildrop.cf","maildrop.ga","maildrop.gq","maildrop.ml","maileater.com","mailexpire.com","mailf5.com","mailfall.com","mailfs.com","mailguard.me","mailhazard.com","mailhazard.us","mailimate.com","mailin8r.com","mailinater.com","mailinator.com","mailinator.net","mailinator.org","mailinator2.com","mailincubator.com","mailismagic.com","mailita.tk","mailjunk.cf","mailjunk.ga","mailjunk.gq","mailjunk.ml","mailjunk.tk","mailme.ir","mailme.lv","mailme24.com","mailmetrash.com","mailmoat.com","mailms.com","mailnew.com","mailnull.com","mailorg.org","mailpick.biz","mailproxsy.com","mailquack.com","mailrock.biz","mailsac.com","mailscrap.com","mailshell.com","mailsiphon.com","mailslapping.com","mailslite.com","mailspam.me","mailspam.net","mailspam.xyz","mailtemp.info","mailtome.de","mailtothis.com","mailtrash.net","mailtv.net","mailtv.tv","mailwarden.com","mailx.icu","mailzilla.com","mailzilla.org","makemetheking.com","malahov.de","manifestgenerator.com","martindalemail.com","mbx.cc","mcache.net","meltmail.com","messagebeamer.de","mezimages.net","mfsa.ru","mierdamail.com","mintemail.com","misterpinball.de","mjukglass.nu","moakt.cc","mobi.web.id","moburl.com","moncourrier.fr.nf","monemail.fr.nf","monmail.fr.nf","monumentmail.com","mosembiense.com","msa.minsmail.com","mt2009.com","mt2014.com","mt2015.com","mt2016.com","mundomail.net","munsterschule.de","mx0.wwwnew.eu","my10minutemail.com","myalias.pw","mycard.net.ua","mycorneroftheinter.net","myfake.email","myfakemail.ga","myfakemail.tk","mymail-in.net","mymailoasis.com","mynetstore.de","mypartyclip.de","myphantomemail.com","mysamp.de","mytempemail.com","mytrashmail.at","mytrashmail.com","mytrashmail.me","mytrashmail.net","mytrashmail.org","mytrashmail.xyz","mywarnmail.com","myworth.de","n2.com","nada.email","nada.ltd","nadakumail.com","napalm51.cf","napalm51.ga","napalm51.gq","napalm51.ml","napalm51.tk","naughtybeaver.de","neomailbox.com","nepwk.com","netmails.com","netmails.net","netzidiot.de","newfilm42.ru","nfmails.com","niki1.co.uk","nip.email","nmail.cf","no-spam.ws","noblepioneer.com","nobugmail.com","nobulk.com","nobuma.com","nodie.cc","noemail.pw","nomail.pw","nomail.xl.cx","nomail2me.com","nomorespamemails.com","nonspam.eu","nonspammer.de","noref.in","norseforce.com","nospam.ze.tc","nospam4.us","nospamfor.us","nospammail.net","nospamthanks.info","notmailinator.com","notsharingmy.info","notwam.com","nowmymail.com","nwldx.com","objectmail.com","obobbo.com","odnorazovoe.ru","one-time.email","onemail.host","onewaymail.com","online.ms","onqin.com","ordinaryamerican.net","ott.io","ourklips.com","outlawspam.com","ovpn.to","owlpic.com","paplease.com","parlimentpetitioner.tk","pepbot.com","pecinan.com","pecinan.net","pecinan.org","pepbot.com","personalsurname.com","pfui.ru","pimpedupmyspace.com","pjjkp.com","plexolan.de","poczta.onet.pl","podmail.net","politikerclub.de","pookmail.com","pop3.xyz","postacı.net","postfach2go.de","poy.kr","pp.ua","privacy.net","privatdemail.net","protonmailxxx.com","proxymail.eu","prtnx.com","prtz.eu","public-inbox.com","putthisinyourspamdatabase.com","pwrby.com","q.com","qhstreetr.com","qq.com","quickinbox.com","r4nd0m.de","raintrain.dk","rams3s.me","randomail.net","rcpt.at","rcs.gaggle.net","re-gister.com","reallymymail.com","receiveee.com","recipeforfailure.com","recursor.net","reddit.com","regbypass.com","regbypass.comsafe-mail.net","rejectmail.com","reliable-mail.com","rempmail.com","returnmail.com","rfcdomain.com","rgpk.com","rhyta.com","rklips.com","rn.com","rollsroyce.ro","rotaniliam.com","rppkn.com","rtrtr.com","s0ny.net","safe-mail.net","safetymail.info","safetypost.de","sandelf.de","sanfinder.com","saynotospams.com","schafmail.de","schrott-email.de","secretemail.de","secure-mail.biz","selfdestructingmail.com","sendfree.org","sendspamhere.com","senseless-entertainment.com","setianku.com","shaggmail.com","shanmails.com","sharklasers.com","shieldedmail.com","shiftmail.com","shitmail.de","shitmail.me","shitmail.org","shitmail.us","shitware.nl","shortmail.net","sibmail.com","skeefmail.com","slapsfromlastnight.com","slaskpost.se","slave-auctions.net","slopsbox.com","slowslow.de","slysystem.net","smashmail.de","smellfear.com","smellrear.com","snakemail.com","sneakemail.com","sneakmail.de","snkmail.com","sofimail.com","sofort-mail.de","sogetthis.com","soodonims.com","spam-be-gone.com","spam4.me","spamail.de","spamama.com","spambob.com","spambob.net","spambob.org","spambog.com","spambog.de","spambog.ru","spambooger.com","spambox.info","spambox.irishspringrealty.com","spambox.us","spamcannon.com","spamcannon.net","spamcero.com","spamcon.org","spamcorptastic.com","spamcowboy.com","spamcowboy.net","spamcowboy.org","spamday.com","spamex.com","spamfree24.de","spamfree24.eu","spamfree24.info","spamfree24.net","spamfree24.org","spamgoes.in","spamgourmet.com","spamgourmet.net","spamgourmet.org","spamherelots.com","spamhereplease.com","spamhole.com","spamify.com","spaminator.de","spamkill.info","spaml.com","spaml.de","spammotel.com","spammy.host","spamoff.de","spamsalad.in","spamslicer.com","spamspot.com","spamstack.net","spamthis.co.uk","spamthisplease.com","spamtrail.com","spamtroll.net","speed.1s.fr","spoofmail.de","squizzy.de","ssoia.com","startfu.com","stinkefinger.net","storedgames.com","streetwisemail.com","supergreatmail.com","supermailer.jp","suremail.info","svk.jp","sweetxxx.de","tafmail.com","tagyourself.com","tapchicuoihoi.com","teewars.org","tefl.ro","telecomix.pl","temp-mail.de","temp-mail.org","temp-mail.ru","temp.emeraldwebmail.com","temp.mail.y59.jp","tempalias.com","tempe-mail.com","tempemail.biz","tempemail.co.za","tempemail.com","tempemail.net","tempinbox.co.uk","tempinbox.com","tempmail.de","tempmail.eu","tempmail.it","tempmail.net","tempmail.us","tempmail2.com","tempomail.fr","temporaryemail.net","temporaryemail.us","temporaryforwarding.com","temporaryinbox.com","tempsky.com","thanksnospam.info","thc.st","thelimestones.com","thisisnotmyrealemail.com","throwam.com","throwaway.email","throwbackemail.com","throwjunk.com","tilien.com","tittbit.in","tizi.com","tmail.com","tmail.io","tmail.ws","to-exitius.com","topranklist.de","tradermail.info","trash-amil.com","trash-mail.at","trash-mail.cf","trash-mail.com","trash-mail.de","trash-mail.ga","trash-mail.gq","trash-mail.io","trash-mail.ml","trash-mail.tk","trash2009.com","trash2010.com","trash2011.com","trashdevil.com","trashdevil.de","trashemail.de","trashinbox.com","trashmail.app","trashmail.at","trashmail.com","trashmail.de","trashmail.gq","trashmail.io","trashmail.me","trashmail.net","trashmail.org","trashmail.xyz","trashmailer.com","trashme.fr","trayna.com","trbvm.com","trollproject.com","trommlermail.de","truc.biz","ttt.dubaimail.net","turoid.com","twinmail.de","tyldd.com","uroid.com","usa.cc","venompen.com","veryrealemail.com","vidchart.com","viditag.com","viralplays.com","vomoto.com","vpn.st","vsimcard.com","vubby.com","walala.org","walkmail.net","walmail.de","wasteland.rfc822.org","watchfull.net","watchironman3onlinefreefull.com","webemail.me","webm4il.info","weg-werf-email.de","wegwerf-email.at","wegwerf-email.de","wegwerf-email.net","wegwerf-email.org","wegwerfadresse.de","wegwerfemail.de","wegwerfemail.net","wegwerfemail.org","wegwerfemails.de","wegwerfmail.de","wegwerfmail.info","wegwerfmail.net","wegwerfmail.org","wegwerfmails.de","wegwrfmail.de","wetrainbayarea.com","wetrainbayarea.org","whyspam.me","wilemail.com","willhackforfood.biz","willselfdestruct.com","winemaven.info","writeme.us","wronghead.com","wuzupmail.net","www.e4ward.com","www.mailinator.com","wwwnew.eu","xagloo.co","xagloo.com","xemaps.com","xents.com","xmaily.com","xoxy.net","xyzfree.net","yahomail.org","yep.it","yogamaven.com","yopmail.com","yopmail.fr","yopmail.gq","youareadork.com","yourdomain.com","ypmail.webarnak.fr.eu.org","yuurok.com","z1p.biz","za.com","zehnminuten.de","zehnminutenmail.de","zippymail.info","zoemail.net","zoemail.org","zomg.info"];
+
+const isValidEmail = (email) => {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) return false;
+  return !TEMP_DOMAINS.includes(domain);
+};
+
 const C = {
   bg:"#FDF8F5", surface:"#FFFFFF", raised:"#FAF4F0",
   border:"#EDD9CF", borderLt:"#DFC4B8",
@@ -28,6 +37,21 @@ const C = {
 const AnthropicIcon = ({ size=18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{display:"block",flexShrink:0}}>
     <path d="M13.8 3L19 21h-3.4l-1-3.2H9.4L8.4 21H5L10.2 3h3.6zM12 8.2L10.2 14h3.6L12 8.2z" fill="#7A3830"/>
+  </svg>
+);
+
+const LinkedInIcon = ({ size=20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{display:"block"}}>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+    <rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
+  </svg>
+);
+
+const InstagramIcon = ({ size=20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{display:"block"}}>
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
   </svg>
 );
 
@@ -244,6 +268,8 @@ const css = `
   .faq-q:hover{background:#FAF4F0}
   .faq-q-text{font-size:13.5px;font-weight:600;color:#2C1810;line-height:1.4}
   .faq-a{padding:14px 20px 18px;font-size:13px;color:#7A4A3A;line-height:1.75;border-top:1px solid #EDD9CF;background:#FDFAF8}
+  .social-link{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1.5px solid #EDD9CF;color:#BF7587;background:#fff;transition:all .15s;cursor:pointer;text-decoration:none}
+  .social-link:hover{border-color:#A2574F;color:#A2574F;background:#F5ECF0}
   .landing{min-height:100vh;background:#FDF8F5;display:flex;flex-direction:column}
   .lnav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid #EDD9CF;background:#fff}
   .lhero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 32px 52px}
@@ -261,11 +287,12 @@ const css = `
   .fi{color:#A2574F;margin-bottom:14px}
   .ftt{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;margin-bottom:8px;color:#2C1810}
   .fd2{font-size:13px;color:#7A4A3A;line-height:1.75}
-  .lfoot{padding:18px 48px;border-top:1px solid #EDD9CF;display:flex;justify-content:space-between;align-items:center;background:#fff;flex-wrap:wrap;gap:10px}
+  .lfoot{padding:18px 48px;border-top:1px solid #EDD9CF;display:flex;justify-content:space-between;align-items:center;background:#fff;flex-wrap:wrap;gap:12px}
   .lft{font-size:11px;color:#BF7587}
-  .lfoot-links{display:flex;gap:16px}
+  .lfoot-links{display:flex;gap:16px;align-items:center}
   .lfoot-link{font-size:11px;color:#BF7587;cursor:pointer;text-decoration:underline}
   .lfoot-link:hover{color:#A2574F}
+  .lfoot-social{display:flex;gap:8px;align-items:center}
   .aw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#FDF8F5;padding:24px}
   .ac{width:400px;background:#fff;border:1px solid #EDD9CF;border-radius:14px;padding:36px;box-shadow:0 8px 40px rgba(44,24,16,.08)}
   .att{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:6px}
@@ -312,7 +339,9 @@ const css = `
     .lfeats{grid-template-columns:1fr}
     .fc{border-right:none;border-bottom:1px solid #EDD9CF}
     .fc:last-child{border-bottom:none}
-    .lfoot{padding:14px 20px;flex-direction:column;gap:8px;text-align:center}
+    .lfoot{padding:14px 20px;flex-direction:column;gap:10px;text-align:center}
+    .lfoot-links{justify-content:center;flex-wrap:wrap}
+    .lfoot-social{justify-content:center}
     .lacts{flex-direction:column;gap:10px;align-items:stretch}
     .try-btn{justify-content:center}
     .toast{bottom:76px;right:10px;left:10px;max-width:100%}
@@ -434,7 +463,7 @@ const ScoreRing=({score=82})=>{
   return(<div><div className="rw"><div className="rl">Transparency Score</div><div className="rsw"><svg width="130" height="130" viewBox="0 0 130 130"><circle cx={cx} cy={cy} r={r} fill="none" stroke="#EDD9CF" strokeWidth="9"/><circle cx={cx} cy={cy} r={r} fill="none" stroke="#A2574F" strokeWidth="9" strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"/></svg><div className="rc"><div className="rv">{score}</div><div className="rdl">/ 100</div></div></div></div><div>{rows.map(row=>(<div key={row.label} style={{marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}><span style={{color:"#7A4A3A",fontWeight:500}}>{row.label}</span><span style={{color:"#A2574F",fontFamily:"'Geist Mono',monospace",fontSize:11}}>{row.val}</span></div><div className="prog"><div className="pf" style={{width:`${row.pct}%`,background:"#A2574F"}}/></div></div>))}</div></div>);
 };
 
-const DemoBanner=({onSignUp})=>(<div className="demo-banner"><div className="demo-banner-text"><Icon name="info" size={15} color="#A2574F"/>Session only — data won't be saved when you close this tab. Create a free account to keep your work.</div><button className="btn bac bs" onClick={onSignUp}>Create free account</button></div>);
+const DemoBanner=({onSignUp})=>(<div className="demo-banner"><div className="demo-banner-text"><Icon name="info" size={15} color="#A2574F"/>Viewing sample data · Session only — sign up to save your work.</div><button className="btn bac bs" onClick={onSignUp}>Create free account</button></div>);
 
 const FAQ_ITEMS=[
   {q:"What is ImpactLens?",a:"ImpactLens is a free analytics platform built for Indian NGOs. Log programmes, track beneficiaries, measure volunteer performance, and generate donor-ready impact reports — all in one place."},
@@ -444,6 +473,7 @@ const FAQ_ITEMS=[
   {q:"How can you help my organization raise or deploy capital?",a:"ImpactLens generates structured financial reports — cost per beneficiary, fund utilisation ratios, transparency scores — exactly the data that grant committees and CSR donors require. Organisations using ImpactLens can demonstrate impact quantitatively, which significantly strengthens funding applications and capital deployment decisions."},
   {q:"Who is it built for?",a:"Indian NGOs in education, healthcare, and livelihood sectors — especially those seeking grants, CSR funding, or institutional donors who require structured impact data."},
 ];
+
 const FAQSection=()=>{
   const[open,setOpen]=useState(null);
   return(
@@ -654,12 +684,15 @@ const Legal=({initialTab="privacy"})=>{
   </div>);
 };
 
+// Auth with temp mail block
 const AuthPage=({onAuth,onGuest})=>{
   const[mode,setMode]=useState("login");const[email,setEmail]=useState("");const[pw,setPw]=useState("");
   const[orgName,setOrgName]=useState("");const[city,setCity]=useState("");
   const[loading,setLoading]=useState(false);const[err,setErr]=useState("");
   const submit=async()=>{
-    setErr("");setLoading(true);
+    setErr("");
+    if(mode==="signup"&&!isValidEmail(email)){setErr("Please enter a valid work or personal email. Temporary email addresses are not accepted.");return;}
+    setLoading(true);
     if(isDemo){onAuth({id:"demo"},SEED_ORG);setLoading(false);return;}
     try{
       if(mode==="login"){const{data,error:e}=await supabase.auth.signInWithPassword({email,password:pw});if(e)throw e;const org=await db.getOrg(data.user.id);onAuth(data.user,org);}
@@ -683,6 +716,7 @@ const AuthPage=({onAuth,onGuest})=>{
   </div></div>);
 };
 
+// Landing with social icons in footer
 const Landing=({onEnter,onGuest,onLegal})=>(<div className="landing">
   <nav className="lnav"><div style={{display:"flex",alignItems:"center",gap:9}}><div className="lm"><Icon name="leaf" size={14} color="#A2574F"/></div><span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:19,fontWeight:600,color:"#2C1810"}}>ImpactLens</span></div><div style={{display:"flex",gap:10}}><button className="btn bg bs" onClick={onEnter}>Sign in</button><button className="btn bp bs" onClick={onEnter}>Get started free</button></div></nav>
   <div className="lhero">
@@ -699,7 +733,22 @@ const Landing=({onEnter,onGuest,onLegal})=>(<div className="landing">
   </div>
   <div className="lfeats">{[{icon:"sparkle",title:"AI Impact Narratives",desc:"Claude reads your programme data and writes a compelling donor report in seconds — no writing required."},{icon:"predict",title:"Predictive Analytics",desc:"Forecast next month's beneficiary reach, volunteer needs, and fund requirements from your real trends."},{icon:"bar",title:"Financial Transparency",desc:"Cost per beneficiary, fund utilisation breakdowns, and a transparency score — the numbers that move donors."}].map(f=>(<div key={f.title} className="fc"><div className="fi"><Icon name={f.icon} size={22} color="#A2574F"/></div><div className="ftt">{f.title}</div><div className="fd2">{f.desc}</div></div>))}</div>
   <FAQSection/>
-  <div className="lfoot"><div className="lft">© 2026 ImpactLens · All rights reserved</div><div className="lfoot-links"><span className="lfoot-link" onClick={()=>onLegal("privacy")}>Privacy Policy</span><span className="lfoot-link" onClick={()=>onLegal("terms")}>Terms of Use</span><span className="lfoot-link" onClick={()=>onLegal("data")}>Data & Compliance</span></div></div>
+  <div className="lfoot">
+    <div className="lft">© 2026 ImpactLens · All rights reserved</div>
+    <div className="lfoot-social">
+      <a href="https://www.instagram.com/impactlens_ind?igsh=MXZ2OWcyeGh5ZmxjMA%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="social-link" title="Follow us on Instagram">
+        <InstagramIcon size={16}/>
+      </a>
+      <a href="https://www.linkedin.com/company/impactlens-ind/" target="_blank" rel="noopener noreferrer" className="social-link" title="Connect on LinkedIn">
+        <LinkedInIcon size={16}/>
+      </a>
+    </div>
+    <div className="lfoot-links">
+      <span className="lfoot-link" onClick={()=>onLegal("privacy")}>Privacy Policy</span>
+      <span className="lfoot-link" onClick={()=>onLegal("terms")}>Terms of Use</span>
+      <span className="lfoot-link" onClick={()=>onLegal("data")}>Data & Compliance</span>
+    </div>
+  </div>
 </div>);
 
 const SignOutModal=({onConfirm,onCancel})=>(<div className="overlay" onClick={onCancel}><div className="modal" style={{width:360}} onClick={e=>e.stopPropagation()}><div className="mh"><div className="mt">Sign out?</div><div className="ms">You'll need to sign in again to access your dashboard.</div></div><div className="mf"><button className="btn bg" onClick={onCancel}>Cancel</button><button className="btn bp" onClick={onConfirm}><Icon name="logout" size={13}/>Sign out</button></div></div></div>);
@@ -717,7 +766,7 @@ export default function App(){
   const[showSignOut,setShowSignOut]=useState(false);const[showMore,setShowMore]=useState(false);
   const showToast=useCallback((msg,type="ok")=>{setToast({msg,type});setTimeout(()=>setToast(null),3500);},[]);
   const onAuth=async(u,o)=>{setUser(u);setOrg(o);setIsGuest(false);setDataLoading(true);const[acts,vols]=await Promise.all([db.getActivities(o.id,false),db.getVolunteers(o.id,false)]);setActivities(acts);setVolunteers(vols);setDataLoading(false);setView("app");};
-  const onGuest=()=>{setUser(null);setOrg({id:"guest",name:"Your Organisation",type:"NGO",city:"India"});setIsGuest(true);setActivities([]);setVolunteers([]);setView("app");};
+  const onGuest=()=>{setUser(null);setOrg({id:"guest",name:"Your Organisation",type:"NGO",city:"India"});setIsGuest(true);setActivities([...SEED_ACTIVITIES]);setVolunteers([...SEED_VOLUNTEERS]);setView("app");};
   const onLogout=()=>{if(!isDemo&&!isGuest)supabase.auth.signOut();setUser(null);setOrg(null);setIsGuest(false);setView("landing");setPage("dashboard");setShowSignOut(false);};
   const onLegal=(tab)=>{setLegalTab(tab);setView("legal");};
   const navTo=(id)=>{setPage(id);setShowMore(false);};
